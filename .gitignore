@@ -55,3 +55,10 @@ yarn-error.log
 
 # Deployment
 .claude/
+
+# Venv local
+.venv/
+
+# Vídeos pesados
+queue/*/media/*.mov
+queue/*/media/*.mp4
