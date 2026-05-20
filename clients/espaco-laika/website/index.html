@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espaço Laika - Onde a Criatividade Encontra a Comunidade</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Espaço criativo no coração do interior de São Paulo. Coworking, eventos culturais, workshops e comunidade criativa.">
+    <meta name="keywords" content="espaço criativo, coworking, interior sp, eventos culturais, workshops, comunidade criativa">
+    <meta name="author" content="Espaço Laika">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://espacolaika.com.br/">
+    <meta property="og:title" content="Espaço Laika - Onde a Criatividade Encontra a Comunidade">
+    <meta property="og:description" content="Espaço criativo no coração do interior de São Paulo. Coworking, eventos culturais, workshops e comunidade criativa.">
+    <meta property="og:image" content="https://espacolaika.com.br/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://espacolaika.com.br/">
+    <meta property="twitter:title" content="Espaço Laika - Onde a Criatividade Encontra a Comunidade">
+    <meta property="twitter:description" content="Espaço criativo no coração do interior de São Paulo. Coworking, eventos culturais, workshops e comunidade criativa.">
+    <meta property="twitter:image" content="https://espacolaika.com.br/images/og-image.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="css/animations.css" as="style">
+    <link rel="preload" href="js/main.js" as="script">
+    <link rel="preload" href="js/utils.js" as="script">
+    <link rel="preload" href="js/pwa.js" as="script">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3498db">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Espaço Laika">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
+
+    <!-- Header -->
+    <header class="header" role="banner">
+        <nav class="nav" role="navigation" aria-label="Navegação principal">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="#home" aria-label="Ir para início - Espaço Laika">
+                        <img src="assets/logo-laika.svg" alt="Espaço Laika - Logo" class="logo" loading="eager">
+                    </a>
+                </div>
+
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-list" role="menubar">
+                        <li role="none"><a href="#home" class="nav-link" role="menuitem">Início</a></li>
+                        <li role="none"><a href="#sobre" class="nav-link" role="menuitem">Sobre</a></li>
+                        <li role="none"><a href="#espacos" class="nav-link" role="menuitem">Espaços</a></li>
+                        <li role="none"><a href="#eventos" class="nav-link" role="menuitem">Eventos</a></li>
+                        <li role="none"><a href="#contato" class="nav-link" role="menuitem">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Alternar tema claro/escuro">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    <a href="#contato" class="btn btn-primary">Agendar Visita</a>
+                    <div class="social-links">
+                        <a href="https://instagram.com/espacolaika" class="social-link" aria-label="Visite nosso Instagram" target="_blank" rel="noopener">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://tiktok.com/@espacolaika" class="social-link" aria-label="Visite nosso TikTok" target="_blank" rel="noopener">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="https://youtube.com/espacolaika" class="social-link" aria-label="Visite nosso YouTube" target="_blank" rel="noopener">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-toggle" id="nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Espaço Laika",
+        "description": "Espaço criativo no coração do interior de São Paulo. Coworking, eventos culturais, workshops e comunidade criativa.",
+        "url": "https://espacolaika.com.br",
+        "logo": "https://espacolaika.com.br/assets/logo-laika.svg",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Rua das Flores, 123",
+            "addressLocality": "Centro",
+            "addressRegion": "SP",
+            "postalCode": "12345-678",
+            "addressCountry": "BR"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+55-11-99999-9999",
+            "contactType": "customer service",
+            "availableLanguage": "Portuguese"
+        },
+        "sameAs": [
+            "https://instagram.com/espacolaika",
+            "https://tiktok.com/@espacolaika",
+            "https://youtube.com/espacolaika"
+        ]
+    }
+    </script>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero" role="main" aria-labelledby="hero-title">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 id="hero-title" class="hero-title">
+                    Onde a <span class="highlight">Criatividade</span> Encontra a <span class="highlight">Comunidade</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Espaço criativo no coração do interior de São Paulo. Um lugar onde ideias ganham vida,
+                    conexões se fortalecem e a comunidade criativa prospera.
+                </p>
+                <div class="hero-actions">
+                    <a href="#espacos" class="btn btn-primary btn-large">Conheça Nossos Espaços</a>
+                    <a href="#eventos" class="btn btn-secondary btn-large">Ver Eventos</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="images/hero-espaco.jpg" alt="Espaço Laika - Ambiente criativo com mesas de trabalho, plantas e decoração moderna" class="hero-img" loading="eager">
+                <div class="hero-stats" aria-label="Estatísticas do Espaço Laika">
+                    <div class="stat">
+                        <span class="stat-number" aria-label="Mais de 500 ideias criadas">500+</span>
+                        <span class="stat-label">Ideias Criadas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" aria-label="Mais de 200 pessoas conectadas">200+</span>
+                        <span class="stat-label">Pessoas Conectadas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" aria-label="Mais de 50 eventos realizados">50+</span>
+                        <span class="stat-label">Eventos Realizados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Section -->
+    <section id="sobre" class="section sobre">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Sobre o Espaço Laika</h2>
+                <p class="section-subtitle">Conheça nossa história e missão</p>
+            </div>
+
+            <div class="sobre-content">
+                <div class="sobre-text">
+                    <h3>Um Espaço para Criar e Conectar</h3>
+                    <p>
+                        O Espaço Laika nasceu da necessidade de criar um ambiente acolhedor onde criativos,
+                        empreendedores e artistas pudessem se reunir, trocar ideias e desenvolver seus projetos.
+                        Localizado no coração do interior de São Paulo, somos mais do que um espaço físico -
+                        somos uma comunidade viva.
+                    </p>
+                    <p>
+                        Aqui, você encontra não apenas mesas de trabalho e equipamentos, mas um ecossistema
+                        criativo que impulsiona ideias, fortalece conexões e transforma sonhos em realidade.
+                    </p>
+
+                    <div class="valores">
+                        <div class="valor">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Inovação</h4>
+                            <p>Espaço para ideias revolucionárias</p>
+                        </div>
+                        <div class="valor">
+                            <i class="fas fa-users"></i>
+                            <h4>Comunidade</h4>
+                            <p>Conexões que fazem a diferença</p>
+                        </div>
+                        <div class="valor">
+                            <i class="fas fa-heart"></i>
+                            <h4>Paixão</h4>
+                            <p>Amor pelo que fazemos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sobre-image">
+                    <img src="images/sobre-laika.jpg" alt="Espaço Laika - Nossa História" class="sobre-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Espaços Section -->
+    <section id="espacos" class="section espacos">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nossos Espaços</h2>
+                <p class="section-subtitle">Ambientes pensados para sua criatividade</p>
+            </div>
+
+            <div class="espacos-grid">
+                <div class="espaco-card">
+                    <div class="espaco-image">
+                        <img src="images/espaco-coworking.jpg" alt="Coworking Criativo">
+                        <div class="espaco-badge">Mais Popular</div>
+                    </div>
+                    <div class="espaco-content">
+                        <h3>Coworking Criativo</h3>
+                        <p>Espaço compartilhado com mesas individuais, internet de alta velocidade e ambiente inspirador.</p>
+                        <ul class="espaco-features">
+                            <li><i class="fas fa-wifi"></i> Wi-Fi fibra óptica</li>
+                            <li><i class="fas fa-coffee"></i> Café e chá à vontade</li>
+                            <li><i class="fas fa-users"></i> Até 20 pessoas</li>
+                            <li><i class="fas fa-clock"></i> Horário flexível</li>
+                        </ul>
+                        <div class="espaco-price">
+                            <span class="price">R$ 25</span>
+                            <span class="period">/hora</span>
+                        </div>
+                        <a href="#contato" class="btn btn-primary">Reservar Agora</a>
+                    </div>
+                </div>
+
+                <div class="espaco-card">
+                    <div class="espaco-image">
+                        <img src="images/espaco-reunioes.jpg" alt="Sala de Reuniões">
+                    </div>
+                    <div class="espaco-content">
+                        <h3>Sala de Reuniões</h3>
+                        <p>Sala equipada para reuniões, workshops e apresentações com projetor e sistema de som.</p>
+                        <ul class="espaco-features">
+                            <li><i class="fas fa-projector"></i> Projetor HD</li>
+                            <li><i class="fas fa-volume-up"></i> Sistema de som</li>
+                            <li><i class="fas fa-users"></i> Até 15 pessoas</li>
+                            <li><i class="fas fa-tv"></i> TV 4K 55"</li>
+                        </ul>
+                        <div class="espaco-price">
+                            <span class="price">R$ 80</span>
+                            <span class="period">/hora</span>
+                        </div>
+                        <a href="#contato" class="btn btn-primary">Reservar Agora</a>
+                    </div>
+                </div>
+
+                <div class="espaco-card">
+                    <div class="espaco-image">
+                        <img src="images/espaco-eventos.jpg" alt="Espaço para Eventos">
+                    </div>
+                    <div class="espaco-content">
+                        <h3>Espaço para Eventos</h3>
+                        <p>Ambiente versátil para eventos culturais, exposições, lançamentos e celebrações.</p>
+                        <ul class="espaco-features">
+                            <li><i class="fas fa-palette"></i> Parede para exposições</li>
+                            <li><i class="fas fa-music"></i> Sistema de som ambiente</li>
+                            <li><i class="fas fa-users"></i> Até 50 pessoas</li>
+                            <li><i class="fas fa-utensils"></i> Catering opcional</li>
+                        </ul>
+                        <div class="espaco-price">
+                            <span class="price">R$ 200</span>
+                            <span class="period">/hora</span>
+                        </div>
+                        <a href="#contato" class="btn btn-primary">Reservar Agora</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eventos Section -->
+    <section id="eventos" class="section eventos">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Próximos Eventos</h2>
+                <p class="section-subtitle">Participe da nossa programação cultural</p>
+            </div>
+
+            <div class="eventos-grid">
+                <div class="evento-card">
+                    <div class="evento-image">
+                        <img src="images/evento-workshop.jpg" alt="Workshop de Fotografia">
+                        <div class="evento-date">
+                            <span class="day">15</span>
+                            <span class="month">ABR</span>
+                        </div>
+                    </div>
+                    <div class="evento-content">
+                        <h3>Workshop de Fotografia Criativa</h3>
+                        <p>Aprenda técnicas avançadas de composição e iluminação com o fotógrafo Marcos Silva.</p>
+                        <div class="evento-info">
+                            <span><i class="fas fa-clock"></i> 14h às 18h</span>
+                            <span><i class="fas fa-users"></i> 12 vagas</span>
+                            <span><i class="fas fa-dollar-sign"></i> R$ 120</span>
+                        </div>
+                        <a href="#contato" class="btn btn-primary">Inscrever-se</a>
+                    </div>
+                </div>
+
+                <div class="evento-card">
+                    <div class="evento-image">
+                        <img src="images/evento-exposicao.jpg" alt="Exposição de Arte Local">
+                        <div class="evento-date">
+                            <span class="day">22</span>
+                            <span class="month">ABR</span>
+                        </div>
+                    </div>
+                    <div class="evento-content">
+                        <h3>Exposição "Cores do Interior"</h3>
+                        <p>Mostra coletiva de artistas locais com vernissage e coquetel. Entrada gratuita.</p>
+                        <div class="evento-info">
+                            <span><i class="fas fa-clock"></i> 19h às 22h</span>
+                            <span><i class="fas fa-users"></i> 50 pessoas</span>
+                            <span><i class="fas fa-dollar-sign"></i> Gratuito</span>
+                        </div>
+                        <a href="#contato" class="btn btn-primary">Confirmar Presença</a>
+                    </div>
+                </div>
+
+                <div class="evento-card">
+                    <div class="evento-image">
+                        <img src="images/evento-networking.jpg" alt="Networking Criativo">
+                        <div class="evento-date">
+                            <span class="day">28</span>
+                            <span class="month">ABR</span>
+                        </div>
+                    </div>
+                    <div class="evento-content">
+                        <h3>Networking Criativo</h3>
+                        <p>Conecte-se com empreendedores, designers e profissionais criativos da região.</p>
+                        <div class="evento-info">
+                            <span><i class="fas fa-clock"></i> 18h às 21h</span>
+                            <span><i class="fas fa-users"></i> 30 pessoas</span>
+                            <span><i class="fas fa-dollar-sign"></i> R$ 25</span>
+                        </div>
+                        <a href="#contato" class="btn btn-primary">Participar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="eventos-cta">
+                <h3>Quer organizar seu evento conosco?</h3>
+                <p>Oferecemos estrutura completa para workshops, exposições e celebrações.</p>
+                <a href="#contato" class="btn btn-secondary">Falar com a Equipe</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria Section -->
+    <section class="section galeria" aria-labelledby="galeria-title">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="galeria-title" class="section-title">Galeria</h2>
+                <p class="section-subtitle">Momentos e criações do Espaço Laika</p>
+            </div>
+
+            <div class="galeria-grid" role="img" aria-label="Galeria de fotos do Espaço Laika">
+                <div class="galeria-item">
+                    <img src="images/galeria-1.jpg" alt="Workshop de fotografia criativa no Espaço Laika - participantes aprendendo técnicas de iluminação" loading="lazy">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/galeria-2.jpg" alt="Exposição de arte local - obras de artistas da região em destaque" loading="lazy">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/galeria-3.jpg" alt="Espaço de coworking em ação - pessoas trabalhando em projetos criativos" loading="lazy">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/galeria-4.jpg" alt="Evento cultural - apresentação musical em ambiente acolhedor" loading="lazy">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/galeria-5.jpg" alt="Networking criativo - profissionais trocando ideias e contatos" loading="lazy">
+                </div>
+                <div class="galeria-item">
+                    <img src="images/galeria-6.jpg" alt="Espaço de criação - materiais artísticos e ambiente inspirador" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato Section -->
+    <section id="contato" class="section contato">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Entre em Contato</h2>
+                <p class="section-subtitle">Vamos criar algo incrível juntos</p>
+            </div>
+
+            <div class="contato-content">
+                <div class="contato-info">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Localização</h4>
+                            <p>Rua das Flores, 123<br>Centro - Interior/SP<br>CEP: 12345-678</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Horário de Funcionamento</h4>
+                            <p>Segunda a Sexta: 8h às 18h<br>Sábado: 9h às 13h<br>Domingo: Fechado</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Telefone</h4>
+                            <p>(11) 99999-9999<br>(11) 8888-8888</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>contato@espacolaika.com.br<br>eventos@espacolaika.com.br</p>
+                        </div>
+                    </div>
+
+                    <div class="map-container">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.0976!2d-46.6547!3d-23.5505!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sPra%C3%A7a%20da%20S%C3%A9%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1sen!2sbr!4v1712345678901!5m2!1sen!2sbr"
+                            width="100%"
+                            height="300"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+
+                <div class="contato-form">
+                    <form id="contactForm" action="#" method="POST" aria-labelledby="form-title">
+                        <h3 id="form-title" class="form-title">Envie sua Mensagem</h3>
+                        <div class="form-group">
+                            <label for="nome">Nome Completo <span class="required">*</span></label>
+                            <input type="text" id="nome" name="nome" required aria-describedby="nome-help" aria-required="true">
+                            <small id="nome-help" class="form-help">Digite seu nome completo</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required aria-describedby="email-help" aria-required="true">
+                            <small id="email-help" class="form-help">Usaremos este email para responder</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="tel" id="telefone" name="telefone" aria-describedby="telefone-help">
+                            <small id="telefone-help" class="form-help">Opcional - para contato por WhatsApp</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="assunto">Assunto <span class="required">*</span></label>
+                            <select id="assunto" name="assunto" required aria-describedby="assunto-help" aria-required="true">
+                                <option value="">Selecione...</option>
+                                <option value="agendamento">Agendamento de Espaço</option>
+                                <option value="evento">Organização de Evento</option>
+                                <option value="informacao">Informações Gerais</option>
+                                <option value="parceria">Proposta de Parceria</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                            <small id="assunto-help" class="form-help">Escolha o assunto da sua mensagem</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mensagem">Mensagem <span class="required">*</span></label>
+                            <textarea id="mensagem" name="mensagem" rows="5" required aria-describedby="mensagem-help" aria-required="true"></textarea>
+                            <small id="mensagem-help" class="form-help">Descreva sua necessidade ou dúvida</small>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="newsletter" name="newsletter" aria-describedby="newsletter-help">
+                                <span class="checkmark"></span>
+                                Quero receber novidades e eventos por email
+                            </label>
+                            <small id="newsletter-help" class="form-help">Opcional - você pode cancelar a qualquer momento</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large" aria-describedby="submit-help">
+                            <span class="btn-text">Enviar Mensagem</span>
+                            <span class="btn-loading" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> Enviando...
+                            </span>
+                        </button>
+                        <small id="submit-help" class="form-help">Sua mensagem será respondida em até 24 horas</small>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/logo-laika.png" alt="Espaço Laika" class="logo">
+                    </div>
+                    <p>Onde a criatividade encontra a comunidade. Espaço criativo no coração do interior de São Paulo.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="#sobre">Sobre Nós</a></li>
+                        <li><a href="#espacos">Espaços</a></li>
+                        <li><a href="#eventos">Eventos</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Espaços</h4>
+                    <ul>
+                        <li><a href="#espacos">Coworking Criativo</a></li>
+                        <li><a href="#espacos">Sala de Reuniões</a></li>
+                        <li><a href="#espacos">Espaço para Eventos</a></li>
+                        <li><a href="#contato">Reservas</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Receba novidades sobre eventos e ofertas especiais.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Seu email" required>
+                        <button type="submit" class="btn btn-primary">Assinar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Espaço Laika. Todos os direitos reservados.</p>
+                <p>Desenvolvido com <i class="fas fa-heart"></i> para a comunidade criativa.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar uma visita ao Espaço Laika."
+       class="whatsapp-btn"
+       target="_blank"
+       rel="noopener"
+       aria-label="Fale conosco pelo WhatsApp">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+        <span class="whatsapp-tooltip">Fale conosco!</span>
+    </a>
+
+    <!-- Scripts -->
+    <script src="js/utils.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/pwa.js" defer></script>
+    <script src="js/analytics.js" defer></script>
+
+    <!-- Google Analytics (replace with your GA ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+</body>
+</body>
+</html>

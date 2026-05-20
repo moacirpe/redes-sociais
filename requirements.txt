@@ -1,0 +1,25 @@
+# Core
+python-dotenv==1.0.0
+
+# WhatsApp Bot
+flask==3.0.3
+anthropic>=0.40.0
+
+# Database
+psycopg2-binary==2.9.7
+
+# HTTP & APIs
+requests==2.31.0
+urllib3==2.0.7
+
+# Data Processing
+pandas==2.0.3
+
+# Utilities
+pytz==2023.3
+
+# Optional: Google Services
+google-auth==2.23.0
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.2.0
+google-api-python-client==2.100.0

@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-04-10T21:52:14.785412Z",
+  "client": "moacir",
+  "status": "WARNING",
+  "metrics": {
+    "instagram": {
+      "followers": 2500,
+      "engagement_rate": 2.1,
+      "posts_today": 1,
+      "comments_unanswered": 5
+    },
+    "tiktok": {
+      "followers": 1200,
+      "engagement_rate": 3.8,
+      "videos_today": 1,
+      "duets_pending": 2
+    },
+    "youtube": {
+      "subscribers": 800,
+      "avg_views": 150,
+      "ctr": 1.2,
+      "videos_today": 0,
+      "comments_unanswered": 3
+    },
+    "overall": {
+      "total_followers": 4500,
+      "target_followers": 10000,
+      "days_elapsed": 0,
+      "target_completion_days": 30
+    }
+  },
+  "alerts": {
+    "high": [],
+    "medium": [
+      {
+        "type": "POSTING_LOW",
+        "platform": "youtube",
+        "severity": "MEDIUM",
+        "message": "Frequência baixa em youtube: 0 posts hoje",
+        "action": "Agendar posts, preparar conteúdo antecipado"
+      }
+    ],
+    "low": [],
+    "total": 1
+  },
+  "recommendations": [
+    "⚠️ MÉDIO: Revisar processos e otimizar performance",
+    "📊 Aumentar monitoramento para 2x/dia",
+    "📝 FREQUÊNCIA: Preparar mais conteúdo, usar agendamento automático"
+  ],
+  "next_check": "2026-04-11T21:52:14.785681Z"
+}
