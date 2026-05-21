@@ -51,7 +51,7 @@ FALLBACK_MESSAGE = (
 
 def sendWhatsappMessage(to: str, text: str):
     """Envia mensagem de texto via WhatsApp Business API."""
-    url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
+    url = f"https://graph.facebook.com/v21.0/{PHONE_NUMBER_ID}/messages"
     headers = {
         "Authorization": f"Bearer {WHATSAPP_TOKEN}",
         "Content-Type": "application/json",
