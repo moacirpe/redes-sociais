@@ -88,5 +88,7 @@ def healthCheck():
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
+    token = os.getenv("MOPER_WHATSAPP_TOKEN", "")
     logger.info(f"Servidor WhatsApp Moper iniciando na porta {port}")
+    logger.info(f"TOKEN carregado: ...{token[-20:] if token else 'VAZIO'}")
     app.run(host="0.0.0.0", port=port)
