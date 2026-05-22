@@ -22,7 +22,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 
-from execution.whatsappResponder import handleIncomingMessage
+from execution.whatsappResponder import handleIncomingMessage, setActiveToken
 
 load_dotenv()
 
@@ -78,6 +78,29 @@ def receiveMessage():
         logger.error(f"Erro ao processar payload: {e}")
 
     return jsonify({"status": "ok"}), 200
+
+
+@app.route("/admin/update-token", methods=["POST"])
+def updateToken():
+    """Atualiza o token WhatsApp em runtime sem precisar reimplantar.
+
+    Uso:
+        curl -X POST https://<host>/admin/update-token \
+             -H "Authorization: Bearer <VERIFY_TOKEN>" \
+             -H "Content-Type: application/json" \
+             -d '{"token": "NOVO_TOKEN_AQUI"}'
+    """
+    auth = request.headers.get("Authorization", "")
+    if auth != f"Bearer {VERIFY_TOKEN}":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.get_json()
+    new_token = (data or {}).get("token", "").strip()
+    if not new_token:
+        return jsonify({"error": "Campo 'token' ausente ou vazio"}), 400
+
+    setActiveToken(new_token)
+    return jsonify({"status": "ok", "token_suffix": f"...{new_token[-20:]}"}), 200
 
 
 @app.route("/", methods=["GET"])

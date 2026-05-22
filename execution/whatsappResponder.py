@@ -18,7 +18,20 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 PHONE_NUMBER_ID = os.getenv("MOPER_WHATSAPP_PHONE_NUMBER_ID")
-WHATSAPP_TOKEN  = os.getenv("MOPER_WHATSAPP_TOKEN")
+
+# Token em variável mutável — pode ser atualizado em runtime via /admin/update-token
+_active_token = os.getenv("MOPER_WHATSAPP_TOKEN", "")
+
+
+def setActiveToken(new_token: str):
+    global _active_token
+    _active_token = new_token
+    logger.info(f"Token atualizado em runtime: ...{new_token[-20:]}")
+
+
+def getActiveToken() -> str:
+    return _active_token
+
 
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
@@ -53,7 +66,7 @@ def sendWhatsappMessage(to: str, text: str):
     """Envia mensagem de texto via WhatsApp Business API."""
     url = f"https://graph.facebook.com/v21.0/{PHONE_NUMBER_ID}/messages"
     headers = {
-        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Authorization": f"Bearer {getActiveToken()}",
         "Content-Type": "application/json",
     }
     payload = {
