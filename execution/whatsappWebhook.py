@@ -20,7 +20,7 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 
 from execution.whatsappResponder import handleIncomingMessage, setActiveToken
 
@@ -101,6 +101,20 @@ def updateToken():
 
     setActiveToken(new_token)
     return jsonify({"status": "ok", "token_suffix": f"...{new_token[-20:]}"}), 200
+
+
+@app.route("/paleteiras")
+def catalogoPaleteiras():
+    """Página de catálogo de paleteiras auto elevatórias Moper."""
+    static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+    return send_from_directory(static_dir, "paleteiras.html")
+
+
+@app.route("/paleteiras/img/<path:filename>")
+def imagensPaleteiras(filename):
+    """Serve imagens do catálogo de paleteiras."""
+    img_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "img")
+    return send_from_directory(img_dir, filename)
 
 
 @app.route("/", methods=["GET"])
