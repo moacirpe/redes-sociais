@@ -1,5 +1,5 @@
 # Handoff — Redes Sociais
-_Atualizado em: 2026-05-09_
+_Atualizado em: 2026-06-03_
 
 ## Estado atual
 
@@ -9,10 +9,14 @@ _Atualizado em: 2026-05-09_
 - **Credenciais vazias no .env:** TikTok (todos), YouTube (todos), Instagram namasa
 - **VPS descartado:** substituído por Neon — sem necessidade de SSH tunnel
 - **Auto-accept configurado:** `.claude/settings.local.json` tem `defaultMode: bypassPermissions`
+- **WhatsApp bot Moper:** funcionando no Railway.app — IA (Claude Haiku), memória 30 dias, horário de atendimento, transferência para humano ✅
+- **Meta Business Verification:** em andamento — documentos enviados, aguardando aprovação (até 48h a partir de 03/06/2026)
 
-**Próximos passos:**
-1. Preencher tokens do Instagram namasa (requer acesso à conta que gerencia a página do Facebook Namasa)
-2. Desenvolver relatório mensal (`execution/generateReport.py`)
+**Próximos passos (por prioridade):**
+1. ⏳ Aguardar aprovação da verificação Meta (Melissa cuida disso)
+2. Após aprovação: trocar número de teste WhatsApp pelo número real da Moper — atualizar `MOPER_WHATSAPP_PHONE_NUMBER_ID` no Railway
+3. Preencher tokens do Instagram namasa (requer acesso à conta que gerencia a página do Facebook Namasa)
+4. Publicação automática de posts — spec criada em `docs/superpowers/specs/`, implementação pendente
 
 ---
 
@@ -67,6 +71,7 @@ Dados salvos no Neon:
 | moacir | Coleta YouTube | `[1-S]` | Preencher MOACIR_YOUTUBE_* no .env |
 | moacir | Relatório mensal | `[5-T]` ✅ | Pronto — console + CSV (`execution/generateReport.py`) |
 | moper-maquinas | Coleta Instagram | `[5-T]` ✅ | Pronto |
+| moper-maquinas | WhatsApp Bot | `[4-C]` ✅ | Aguardando verificação Meta para liberar todos os números |
 | espaco-laika | Coleta Instagram | `[5-T]` ✅ | Pronto — page token EAA, graph.facebook.com |
 | namasa | Coleta Instagram | `[1-S]` | Preencher NAMASA_INSTAGRAM_TOKEN/ACCOUNT_ID |
 | Automação | Agendamento cron | `[5-T]` ✅ | Todo dia 8h — `execution/collectAll.sh` |
