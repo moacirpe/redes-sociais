@@ -22,12 +22,20 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
 
-from execution.whatsappResponder import handleIncomingMessage, setActiveToken
-
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
+
+try:
+    from execution.whatsappResponder import handleIncomingMessage, setActiveToken
+    WHATSAPP_ENABLED = True
+    logger.info("WhatsApp responder carregado ✅")
+except Exception as e:
+    logger.error(f"WhatsApp responder indisponível: {e}")
+    WHATSAPP_ENABLED = False
+    def handleIncomingMessage(sender, text): pass
+    def setActiveToken(token): pass
 
 app = Flask(__name__)
 
