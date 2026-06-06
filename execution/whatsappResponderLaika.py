@@ -35,8 +35,8 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 EVOLUTION_URL = os.getenv("EVOLUTION_API_URL", "").rstrip("/")
-EVOLUTION_KEY = os.getenv("EVOLUTION_API_KEY", "")
-INSTANCE = os.getenv("LAIKA_EVOLUTION_INSTANCE", "laika")
+EVOLUTION_KEY = os.getenv("EVOLUTION_API_KEY_LAIKA", "")
+INSTANCE = os.getenv("EVOLUTION_INSTANCIA_LAIKA", "pai_espaco_laika")
 TZ = ZoneInfo("America/Sao_Paulo")
 
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
