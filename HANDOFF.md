@@ -9,7 +9,7 @@ _Atualizado em: 2026-06-06_
 - **Catálogo Moper Paleteiras:** publicado no GitHub Pages ✅ → https://moacirpe.github.io/redes-sociais/paleteiras/
 - **Repositório GitHub:** agora **público** (necessário para GitHub Pages gratuito)
 - **Meta Business Verification:** múltiplas tentativas de rejeição por documento de identidade. Melissa submeteu novo documento em 05/06/2026 — aguardando resultado (até 48h)
-- **Espaço Laika WhatsApp:** pendente — Moacir decide se migra o número (67) 99857-4771 para bot (decisão: dono do número perderia acesso pelo app, usaria Meta Business Suite)
+- **Espaço Laika WhatsApp:** código pronto ✅, aguardando escanear QR code com o celular (67) 99857-4771
 - **Credenciais vazias no .env:** TikTok (todos), YouTube (todos), Instagram namasa
 
 ---
@@ -18,7 +18,11 @@ _Atualizado em: 2026-06-06_
 
 1. ⏳ **Verificação Meta:** aguardar resultado (Melissa submeteu 05/06). Se aprovada → atualizar `MOPER_WHATSAPP_PHONE_NUMBER_ID` no Railway com o número real da Moper (47 99232-5747)
 2. **Catálogo:** compartilhar link https://moacirpe.github.io/redes-sociais/paleteiras/ nas redes sociais da Moper ✅ (Melissa já tem o link)
-3. **Espaço Laika WhatsApp:** Moacir precisa decidir sobre o número (67) 99857-4771
+3. **Espaço Laika WhatsApp — escanear QR code:**
+   - Pegar o celular (67) 99857-4771
+   - Abrir o WhatsApp → Menu → Aparelhos conectados → Conectar aparelho
+   - Rodar: `me chama para escanear o QR code do Laika` — eu gero o QR na hora
+   - Após scan: configuro webhook no Evolution API e adiciono vars no Railway
 4. **Token WhatsApp:** renovar em ~60 dias via `./renovarToken.sh`
 5. **Instagram Namasa:** preencher `NAMASA_INSTAGRAM_TOKEN` / `NAMASA_INSTAGRAM_ACCOUNT_ID` no .env
 6. **TikTok/YouTube:** sem credenciais — preencher quando disponíveis
@@ -105,7 +109,7 @@ _Atualizado em: 2026-06-06_
 | moper-maquinas | WhatsApp Bot | `[4-C]` ✅ | Aguardando verificação Meta |
 | moper-maquinas | Catálogo paleteiras | `[5-T]` ✅ | Publicado no GitHub Pages |
 | espaco-laika | Coleta Instagram | `[5-T]` ✅ | Pronto |
-| espaco-laika | WhatsApp Bot | `[0]` | Moacir decide sobre número (67) 99857-4771 |
+| espaco-laika | WhatsApp Bot | `[2-E]` | Escanear QR code com celular (67) 99857-4771 |
 | namasa | Coleta Instagram | `[1-S]` | Preencher NAMASA_INSTAGRAM_TOKEN/ACCOUNT_ID |
 | Automação | Agendamento cron | `[5-T]` ✅ | Todo dia 8h — `execution/collectAll.sh` |
 | Automação | Auto-publish posts | `[1-S]` | Spec pronta, implementação pendente |
