@@ -1,5 +1,5 @@
 # Plano — Redes Sociais
-_Atualizado em: 2026-06-06_
+_Atualizado em: 2026-06-06 (sessão 2)_
 
 > **Tags:** `[0]` planejado · `[1-S]` diretiva/schema · `[2-E]` script existe ·
 > `[3-H]` credenciais no .env · `[4-C]` testado com dado real · `[5-T]` ✅ pipeline completo
@@ -64,10 +64,11 @@ _Atualizado em: 2026-06-06_
 ## Automação e Publicação
 
 - `[5-T]` ✅ Cron diário — coleta automática todos os dias às 8h
-- `[0]` **Publicação de posts (Instagram + Facebook)** — próxima frente a implementar
-  - Publicar imagem + legenda via API Meta
-  - Suporte a: post único, carrossel
-  - Clientes: moacir, moper, laika (namasa quando tiver token)
-- `[1-S]` Auto-publish agendado — spec em `docs/superpowers/specs/2026-05-10-auto-publish-design.md`
+- `[5-T]` ✅ **Publicação automática Instagram** — `generateCaptions.py` + `publishScheduled.py` + Cloudinary. Testado com post real em 06/06/2026.
+  - Suporte a: imagem (IMAGE) e vídeo (REELS)
+  - Clientes: moacir, moper, laika
+  - Fila: `queue/{cliente}/queue.csv` — editar status para `approved` para publicar
+- `[0]` Publicação Facebook — credenciais prontas, falta implementar no publishScheduled.py
+- `[0]` Publicação TikTok — requer aprovação de API pelo TikTok (processo burocrático)
 - `[0]` Dashboard unificado — não iniciado
 - `[0]` Relatório automático por e-mail — não iniciado

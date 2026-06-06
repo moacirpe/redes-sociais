@@ -1,5 +1,5 @@
 # Handoff — Redes Sociais
-_Atualizado em: 2026-06-06_
+_Atualizado em: 2026-06-06 (sessão 2)_
 
 ## Estado atual
 
@@ -10,7 +10,7 @@ _Atualizado em: 2026-06-06_
 - **Evolution API:** rodando em https://evo.huboperacional.com.br — instância `pai_espaco_laika` criada, status `connecting`
 - **Catálogo Moper Paleteiras:** publicado no GitHub Pages ✅ → https://moacirpe.github.io/redes-sociais/paleteiras/
 - **Meta Business Verification:** Melissa submeteu novo doc em 05/06 — aguardando resultado (até 48h)
-- **Publicação automática de posts:** próxima frente a implementar (Instagram + Facebook)
+- **Publicação automática de posts:** ✅ funcionando — `generateCaptions.py` + `publishScheduled.py` + Cloudinary. Testado com post real no moper em 06/06/2026.
 - **Credenciais vazias:** TikTok (todos), YouTube (todos), Instagram namasa
 
 ---
@@ -23,10 +23,11 @@ _Atualizado em: 2026-06-06_
    - WhatsApp → Menu → Aparelhos conectados → Conectar aparelho
    - Me chamar: "escanear QR code do Laika" → gero o QR na hora
    - Após scan: configuro webhook no Evolution API + vars no Railway → bot ativo
-3. **Publicação automática:** implementar postagem no Instagram e Facebook via API (próxima sessão — ver seção abaixo)
-4. **Token WhatsApp Moper:** renovar em ~60 dias via `./renovarToken.sh`
-5. **Instagram Namasa:** preencher `NAMASA_INSTAGRAM_TOKEN` / `NAMASA_INSTAGRAM_ACCOUNT_ID`
-6. **TikTok/YouTube:** sem credenciais — preencher quando disponíveis
+3. **Publicação Facebook** — adicionar suporte no `publishScheduled.py`. Credenciais já no .env (`FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_ACCESS_TOKEN`). Estimativa: 1-2h.
+4. **Publicação TikTok** — requer aprovação de API no TikTok Developer Portal (processo burocrático, dias/semanas).
+5. **Token WhatsApp Moper:** renovar em ~60 dias via `./renovarToken.sh`
+6. **Instagram Namasa:** preencher `NAMASA_INSTAGRAM_TOKEN` / `NAMASA_INSTAGRAM_ACCOUNT_ID`
+7. **TikTok/YouTube:** sem credenciais — preencher quando disponíveis
 
 ---
 
@@ -128,8 +129,8 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 | laika | WhatsApp Bot | `[2-E]` | Escanear QR code |
 | namasa | Instagram | `[1-S]` | Preencher token |
 | Automação | Cron diário 8h | `[5-T]` ✅ | — |
-| Automação | Publicação posts (IG+FB) | `[0]` | Próxima sessão |
-| Automação | Auto-publish agendado | `[1-S]` | Spec em `docs/superpowers/specs/` |
+| Automação | Publicação posts (IG+FB) | `[5-T]` ✅ | generateCaptions.py + publishScheduled.py |
+| Automação | Auto-publish agendado | `[5-T]` ✅ | Testado com post real: https://www.instagram.com/reel/DZQKZajFTEE/ |
 
 ---
 
