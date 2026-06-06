@@ -1,85 +1,73 @@
 # Plano — Redes Sociais
-_Atualizado em: 2026-04-21_
+_Atualizado em: 2026-06-06_
 
-> **Adaptação de tags para este projeto (sem frontend):**
-> `[0]` planejado · `[1-S]` diretiva/schema criados · `[2-E]` script existe ·
-> `[3-H]` credenciais no .env (pronto para rodar) · `[4-C]` executado com dado real ·
-> `[5-T]` pipeline completo testado nesta sessão (coleta → DB → relatório)
+> **Tags:** `[0]` planejado · `[1-S]` diretiva/schema · `[2-E]` script existe ·
+> `[3-H]` credenciais no .env · `[4-C]` testado com dado real · `[5-T]` ✅ pipeline completo
 
 ---
 
-## Frente: Infraestrutura Core
+## Infraestrutura Core
 
-- cancelado — SSH → VPS descartado, substituído por Neon
-- `[5-T]` ✅ Banco Neon PostgreSQL — `DATABASE_URL` configurado, schema aplicado, pipeline testado
-- `[5-T]` ✅ Schema do banco aplicado — `execution/setupDatabase.py` rodado, 4 tabelas criadas
-- `[5-T]` ✅ Teste de conexões — `execution/testConnections.py` OK (Neon connected)
-- `[2-E]` Backup manual — `execution/manualBackup.py` + arquivo `.tmp/manual_backup/moacir_manual_data.json` existe
-
----
-
-## Frente: Autenticação / Tokens
-
-- `[3-H]` Meta OAuth (Instagram + Facebook) — `execution/generateMetaToken.py` + tokens no .env
-- `[3-H]` TikTok OAuth — `execution/generateTikTokToken.py` + tokens no .env
-- `[3-H]` YouTube OAuth — `execution/generateYouTubeToken.py` + API keys no .env
-- `[2-E]` Verificar elegibilidade TikTok — `execution/checkTikTokEligibility.py` (problema histórico com conta)
+- `[5-T]` ✅ Neon PostgreSQL — `DATABASE_URL` configurado, schema aplicado, pipeline testado
+- `[5-T]` ✅ Schema do banco — 5 tabelas: `social_accounts`, `posts`, `metrics`, `execution_logs`, `whatsapp_conversations`
+- `[5-T]` ✅ Cron diário 8h — `execution/collectAll.sh` coleta todos os clientes
+- `[5-T]` ✅ GitHub Pages — catálogo de paleteiras publicado em https://moacirpe.github.io/redes-sociais/paleteiras/
+- `[2-E]` Evolution API — rodando em https://evo.huboperacional.com.br (instâncias Moper e Laika criadas)
 
 ---
 
-## Frente: Coleta de Dados (Global)
+## Autenticação / Tokens
 
-- `[5-T]` ✅ Fetch Instagram + save — `execution/fetchInstagramData.py --save` → dados no Neon confirmados
-- `[2-E]` Fetch YouTube — não há script global, apenas por cliente
-- `[2-E]` Monitor e Alertas — `execution/monitorAndAlert.py` + `alertSystem.py` + `performanceMonitor.py`
-
----
-
-## Frente: Cliente — moacir
-
-- `[5-T]` ✅ Coleta Instagram — `execution/fetchInstagramData.py --save` → dados salvos no Neon (2026-04-22)
-- `[3-H]` Coleta TikTok — `clients/moacir/execution/fetchTikTokMetrics.py` + tokens no .env
-- `[3-H]` Coleta YouTube — `clients/moacir/execution/fetchYouTubeMetrics.py` + API key no .env
-- `[2-E]` Análise de vídeo — `clients/moacir/execution/analyzeVideoPerformance.py`
-- `[2-E]` Relatório mensal — `clients/moacir/execution/generateMonthlyReport.py`
-- `[1-S]` Plano de crescimento — `clients/moacir/directives/avaliacao_e_plano_crescimento.md`
+- `[5-T]` ✅ Meta OAuth Instagram — tokens moacir, moper, laika no .env
+- `[1-S]` Meta OAuth Instagram namasa — script existe, token vazio
+- `[1-S]` TikTok OAuth — script existe, todos os tokens vazios
+- `[1-S]` YouTube OAuth — script existe, todos os tokens vazios
 
 ---
 
-## Frente: Cliente — espaco-laika
+## Cliente — moacir
 
-- `[3-H]` Coleta Instagram — `clients/espaco-laika/execution/fetchInstagramMetrics.py` + tokens no .env
-- `[3-H]` Coleta TikTok — `clients/espaco-laika/execution/fetchTikTokMetrics.py` + tokens no .env
-- `[3-H]` Coleta YouTube — `clients/espaco-laika/execution/fetchYouTubeMetrics.py` + API key no .env
-- `[2-E]` Análise de vídeo — `clients/espaco-laika/execution/analyzeVideoPerformance.py`
-- `[2-E]` Relatório mensal — `clients/espaco-laika/execution/generateMonthlyReport.py`
-- `[1-S]` Website Espaço Laika — `clients/espaco-laika/website/index.html` (static site, melhorias planejadas)
+- `[5-T]` ✅ Coleta Instagram — `execution/fetchInstagramData.py --save`
+- `[5-T]` ✅ Relatório mensal — `execution/generateReport.py`
+- `[1-S]` Coleta TikTok — script existe, credenciais vazias
+- `[1-S]` Coleta YouTube — script existe, credenciais vazias
 
 ---
 
-## Frente: Cliente — namasa
+## Cliente — moper-maquinas
 
-- `[3-H]` Coleta Instagram — `clients/namasa/execution/fetchInstagramMetrics.py` + tokens no .env
-- `[3-H]` Coleta TikTok — `clients/namasa/execution/fetchTikTokMetrics.py` + tokens no .env
-- `[3-H]` Coleta YouTube — `clients/namasa/execution/fetchYouTubeMetrics.py` + API key no .env
-- `[2-E]` Análise de vídeo — `clients/namasa/execution/analyzeVideoPerformance.py`
-- `[2-E]` Relatório mensal — `clients/namasa/execution/generateMonthlyReport.py`
-
----
-
-## Frente: Cliente — moper-maquinas
-
-- `[3-H]` Coleta Instagram — `clients/moper-maquinas/execution/fetchInstagramMetrics.py` + tokens no .env
-- `[3-H]` Coleta TikTok — `clients/moper-maquinas/execution/fetchTikTokMetrics.py` + tokens no .env
-- `[3-H]` Coleta YouTube — `clients/moper-maquinas/execution/fetchYouTubeMetrics.py` + API key no .env
-- `[2-E]` Análise de vídeo — `clients/moper-maquinas/execution/analyzeVideoPerformance.py`
-- `[2-E]` Relatório mensal — `clients/moper-maquinas/execution/generateMonthlyReport.py`
+- `[5-T]` ✅ Coleta Instagram — pipeline ativo
+- `[5-T]` ✅ Catálogo paleteiras — GitHub Pages publicado
+- `[4-C]` WhatsApp Bot — rodando no Railway (número de teste). Aguardando verificação Meta para ativar número real 47 99232-5747
+- `[1-S]` Coleta TikTok — credenciais vazias
+- `[1-S]` Coleta YouTube — credenciais vazias
 
 ---
 
-## Frente: Automação e Agendamento
+## Cliente — espaco-laika
 
-- `[0]` Agendamento via cron — monitorAndAlert.py preparado mas sem cron configurado
-- `[0]` Publicação automática de posts — não iniciado
-- `[0]` Dashboard unificado (todos os clientes) — não iniciado
-- `[0]` Relatório automático enviado por e-mail — não iniciado
+- `[5-T]` ✅ Coleta Instagram — pipeline ativo
+- `[2-E]` WhatsApp Bot — `execution/whatsappResponderLaika.py` pronto, Evolution API configurada. **Falta: escanear QR code com celular (67) 99857-4771**
+- `[1-S]` Coleta TikTok — credenciais vazias
+- `[1-S]` Coleta YouTube — credenciais vazias
+
+---
+
+## Cliente — namasa
+
+- `[1-S]` Coleta Instagram — script existe, token vazio
+- `[1-S]` Coleta TikTok — credenciais vazias
+- `[1-S]` Coleta YouTube — credenciais vazias
+
+---
+
+## Automação e Publicação
+
+- `[5-T]` ✅ Cron diário — coleta automática todos os dias às 8h
+- `[0]` **Publicação de posts (Instagram + Facebook)** — próxima frente a implementar
+  - Publicar imagem + legenda via API Meta
+  - Suporte a: post único, carrossel
+  - Clientes: moacir, moper, laika (namasa quando tiver token)
+- `[1-S]` Auto-publish agendado — spec em `docs/superpowers/specs/2026-05-10-auto-publish-design.md`
+- `[0]` Dashboard unificado — não iniciado
+- `[0]` Relatório automático por e-mail — não iniciado
