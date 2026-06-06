@@ -30,12 +30,21 @@ logger = logging.getLogger(__name__)
 try:
     from execution.whatsappResponder import handleIncomingMessage, setActiveToken
     WHATSAPP_ENABLED = True
-    logger.info("WhatsApp responder carregado ✅")
+    logger.info("WhatsApp responder Moper carregado ✅")
 except Exception as e:
-    logger.error(f"WhatsApp responder indisponível: {e}")
+    logger.error(f"WhatsApp responder Moper indisponível: {e}")
     WHATSAPP_ENABLED = False
     def handleIncomingMessage(sender, text): pass
     def setActiveToken(token): pass
+
+try:
+    from execution.whatsappResponderLaika import handleIncomingMessage as handleLaikaMessage
+    LAIKA_ENABLED = True
+    logger.info("WhatsApp responder Laika carregado ✅")
+except Exception as e:
+    logger.error(f"WhatsApp responder Laika indisponível: {e}")
+    LAIKA_ENABLED = False
+    def handleLaikaMessage(sender, text): pass
 
 app = Flask(__name__)
 
@@ -84,6 +93,48 @@ def receiveMessage():
 
     except (KeyError, IndexError) as e:
         logger.error(f"Erro ao processar payload: {e}")
+
+    return jsonify({"status": "ok"}), 200
+
+
+@app.route("/webhook/laika", methods=["POST"])
+def receiveLaikaMessage():
+    """Recebe mensagens do Espaço Laika via Evolution API."""
+    data = request.get_json()
+
+    try:
+        event = data.get("event", "")
+        if event != "messages.upsert":
+            return jsonify({"status": "ignored"}), 200
+
+        msg_data = data.get("data", {})
+        key = msg_data.get("key", {})
+
+        # Ignora mensagens enviadas pelo próprio bot
+        if key.get("fromMe", False):
+            return jsonify({"status": "from_me"}), 200
+
+        # Extrai remetente — formato: "5567912345678@s.whatsapp.net"
+        remote_jid = key.get("remoteJid", "")
+        sender = remote_jid.replace("@s.whatsapp.net", "").replace("@c.us", "")
+
+        # Extrai texto — Evolution API pode enviar em campos diferentes
+        message = msg_data.get("message", {})
+        text = (
+            message.get("conversation")
+            or message.get("extendedTextMessage", {}).get("text")
+            or ""
+        ).strip()
+
+        if not text:
+            logger.info(f"Mensagem sem texto ignorada de {sender}")
+            return jsonify({"status": "no_text"}), 200
+
+        logger.info(f"[Laika] Mensagem de {sender}: {text[:60]}...")
+        handleLaikaMessage(sender, text)
+
+    except (KeyError, IndexError, AttributeError) as e:
+        logger.error(f"Erro ao processar payload Laika: {e}")
 
     return jsonify({"status": "ok"}), 200
 
