@@ -110,7 +110,7 @@ Não espere chegar ao limite. Agir cedo garante handoff limpo.
 |---|---|
 | `/clear` é manual | Claude Code não permite que skill ou hook emita `/clear` programaticamente |
 | Skill em `~/.claude/skills/` | Disponível globalmente, não só neste projeto |
-| Hook em `~/.claude/settings.json` | Global — mas verifica existência do HANDOFF.md antes de agir |
+| Hook em `~/.claude/settings.json` | Global — acha o HANDOFF.md do projeto atual via `$CLAUDE_PROJECT_DIR` (genérico, funciona em qualquer projeto) |
 | Detecção por julgamento do Claude | Não há evento nativo "contexto em 60%" — instrução no CLAUDE.md é suficiente |
 | Commit antes do /clear | Garante que os docs estejam salvos mesmo se algo der errado |
 
