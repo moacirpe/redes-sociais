@@ -5,9 +5,9 @@ _Atualizado em: 2026-06-06 (sessão 2)_
 
 - **Pipeline Instagram:** moacir, moper, laika → Neon PostgreSQL ✅ (cron diário 8h)
 - **Banco ativo:** Neon (cloud PostgreSQL) — `DATABASE_URL` no Railway e no .env ✅
-- **WhatsApp bot Moper:** Railway.app — Claude Haiku, memória 30 dias, horário comercial ✅ (número de teste — aguardando verificação Meta para trocar pelo real 47 99232-5747)
+- **WhatsApp bot Moper:** migrado para Evolution API (sem API oficial) — Claude Haiku, memória 30 dias, horário comercial. Código pronto, instância `pai_moper_maquinas` — **aguardando escanear QR code** com celular dedicado da Moper
 - **WhatsApp bot Laika:** código pronto, Evolution API configurada — **aguardando escanear QR code** com celular (67) 99857-4771
-- **Evolution API:** rodando em https://evo.huboperacional.com.br — instância `pai_espaco_laika` criada, status `connecting`
+- **Evolution API:** rodando em https://evo.huboperacional.com.br — instâncias `pai_espaco_laika` e `pai_moper_maquinas` criadas, status `connecting`
 - **Catálogo Moper Paleteiras:** publicado no GitHub Pages ✅ → https://moacirpe.github.io/redes-sociais/paleteiras/
 - **Meta Business Verification:** Melissa submeteu novo doc em 05/06 — aguardando resultado (até 48h)
 - **Publicação automática de posts:** ✅ funcionando — `generateCaptions.py` + `publishScheduled.py` + Cloudinary. Testado com post real no moper em 06/06/2026.
@@ -17,15 +17,19 @@ _Atualizado em: 2026-06-06 (sessão 2)_
 
 ## Próximos passos (por prioridade)
 
-1. ⏳ **Verificação Meta:** aguardar resultado. Se aprovada → trocar `MOPER_WHATSAPP_PHONE_NUMBER_ID` no Railway pelo número real (47 99232-5747)
+1. **Moper WhatsApp — escanear QR code (amanhã):**
+   - Pegar celular dedicado da Moper Máquinas
+   - WhatsApp → Menu → Aparelhos conectados → Conectar aparelho
+   - Me chamar: "escanear QR code do Moper" → gero o QR na hora
+   - Após scan: configuro webhook (`/webhook/moper`) no Evolution API + vars no Railway → bot ativo
 2. **Laika WhatsApp — escanear QR code:**
    - Pegar celular (67) 99857-4771
    - WhatsApp → Menu → Aparelhos conectados → Conectar aparelho
    - Me chamar: "escanear QR code do Laika" → gero o QR na hora
-   - Após scan: configuro webhook no Evolution API + vars no Railway → bot ativo
-3. **Publicação Facebook** — adicionar suporte no `publishScheduled.py`. Credenciais já no .env (`FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_ACCESS_TOKEN`). Estimativa: 1-2h.
-4. **Publicação TikTok** — requer aprovação de API no TikTok Developer Portal (processo burocrático, dias/semanas).
-5. **Token WhatsApp Moper:** renovar em ~60 dias via `./renovarToken.sh`
+   - Após scan: configuro webhook (`/webhook/laika`) no Evolution API + vars no Railway → bot ativo
+3. **Railway — adicionar vars do Moper Evolution:** `EVOLUTION_API_KEY_MOPER`, `EVOLUTION_INSTANCIA_MOPER` (as da Laika já estão lá)
+4. **Publicação Facebook** — adicionar suporte no `publishScheduled.py`. Credenciais já no .env (`FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_ACCESS_TOKEN`). Estimativa: 1-2h.
+5. **Publicação TikTok** — requer aprovação de API no TikTok Developer Portal (processo burocrático, dias/semanas).
 6. **Instagram Namasa:** preencher `NAMASA_INSTAGRAM_TOKEN` / `NAMASA_INSTAGRAM_ACCOUNT_ID`
 7. **TikTok/YouTube:** sem credenciais — preencher quando disponíveis
 
@@ -46,26 +50,31 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 
 ---
 
-## Infraestrutura Railway (WhatsApp Bot Moper)
+## Infraestrutura Railway (WhatsApp Bots — Moper + Laika)
 
 - **URL:** https://web-production-476d9.up.railway.app
+- **Webhook Moper:** https://web-production-476d9.up.railway.app/webhook/moper
 - **Webhook Laika:** https://web-production-476d9.up.railway.app/webhook/laika
 - **Variáveis obrigatórias no Railway:**
-  - `MOPER_WHATSAPP_PHONE_NUMBER_ID`, `MOPER_WHATSAPP_TOKEN`, `MOPER_WHATSAPP_VERIFY_TOKEN`
-  - `EVOLUTION_API_URL`, `EVOLUTION_API_KEY_LAIKA`, `EVOLUTION_INSTANCIA_LAIKA`
+  - `EVOLUTION_API_URL`
+  - `EVOLUTION_API_KEY_MOPER`, `EVOLUTION_INSTANCIA_MOPER`
+  - `EVOLUTION_API_KEY_LAIKA`, `EVOLUTION_INSTANCIA_LAIKA`
   - `ANTHROPIC_API_KEY`, `DATABASE_URL`
 - **Deploy:** automático via push no GitHub (branch main)
 - **Procfile:** `gunicorn execution.whatsappWebhook:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120`
+- **Nota:** Moper migrado da Meta API oficial para Evolution API em 06/06/2026. Vars `MOPER_WHATSAPP_*` não são mais usadas.
 
 ---
 
-## Evolution API (WhatsApp Laika)
+## Evolution API (WhatsApp Moper + Laika)
 
 - **URL:** https://evo.huboperacional.com.br
 - **Instância Laika:** `pai_espaco_laika` | Key: `B62C703C879E-425B-866F-FF29ACF7AEDF`
 - **Instância Moper:** `pai_moper_maquinas` | Key: `6F0B0C0C89B0-4F30-85F4-7D9425C7ACF6`
-- **Status Laika:** `connecting` — precisa escanear QR code
-- **Webhook a configurar após scan:** `https://web-production-476d9.up.railway.app/webhook/laika`
+- **Status:** ambas `connecting` — precisam escanear QR code
+- **Webhooks a configurar após scan:**
+  - Moper: `https://web-production-476d9.up.railway.app/webhook/moper`
+  - Laika: `https://web-production-476d9.up.railway.app/webhook/laika`
 
 ---
 
@@ -100,11 +109,12 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 | `INSTAGRAM_TOKEN` / `INSTAGRAM_BUSINESS_ACCOUNT_ID` (moacir) | ✅ |
 | `MOPER_INSTAGRAM_TOKEN` / `MOPER_INSTAGRAM_ACCOUNT_ID` | ✅ |
 | `LAIKA_INSTAGRAM_TOKEN` / `LAIKA_INSTAGRAM_ACCOUNT_ID` | ✅ |
-| `MOPER_WHATSAPP_PHONE_NUMBER_ID` | ✅ (teste — trocar após verificação Meta) |
-| `MOPER_WHATSAPP_TOKEN` | ✅ (renovar em ~60 dias) |
 | `EVOLUTION_API_URL` | ✅ https://evo.huboperacional.com.br |
+| `EVOLUTION_API_KEY_MOPER` | ✅ |
+| `EVOLUTION_INSTANCIA_MOPER` | ✅ pai_moper_maquinas |
 | `EVOLUTION_API_KEY_LAIKA` | ✅ |
 | `EVOLUTION_INSTANCIA_LAIKA` | ✅ pai_espaco_laika |
+| `MOPER_WHATSAPP_*` (Meta) | ⚠️ obsoleto — Moper migrado para Evolution |
 | `NAMASA_INSTAGRAM_*` | ❌ vazio |
 | `MOACIR_TIKTOK_*` | ❌ vazio |
 | `MOACIR_YOUTUBE_*` | ❌ vazio |
@@ -123,7 +133,7 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 | moacir | YouTube | `[1-S]` | Preencher credenciais |
 | moacir | Relatório mensal | `[5-T]` ✅ | — |
 | moper | Instagram | `[5-T]` ✅ | — |
-| moper | WhatsApp Bot | `[4-C]` | Aguardar verificação Meta |
+| moper | WhatsApp Bot | `[2-E]` | Escanear QR code (Evolution) |
 | moper | Catálogo paleteiras | `[5-T]` ✅ | — |
 | laika | Instagram | `[5-T]` ✅ | — |
 | laika | WhatsApp Bot | `[2-E]` | Escanear QR code |
@@ -141,8 +151,8 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 | `HANDOFF.md` | Este arquivo |
 | `docs/PLANO.md` | Lista detalhada de features |
 | `CLAUDE.md` | Arquitetura, convenções, clientes |
-| `execution/whatsappWebhook.py` | Flask — rotas Moper (`/webhook`) e Laika (`/webhook/laika`) |
-| `execution/whatsappResponder.py` | Bot Moper (Meta API) |
+| `execution/whatsappWebhook.py` | Flask — rotas Moper (`/webhook/moper`) e Laika (`/webhook/laika`), ambas Evolution |
+| `execution/whatsappResponder.py` | Bot Moper (Evolution API) |
 | `execution/whatsappResponderLaika.py` | Bot Laika (Evolution API) |
 | `execution/collectAll.sh` | Cron — coleta todos os clientes |
 | `infra/evolution-api.yml` | Docker Stack Evolution API (referência) |

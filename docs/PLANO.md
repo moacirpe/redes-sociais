@@ -38,7 +38,7 @@ _Atualizado em: 2026-06-06 (sessão 2)_
 
 - `[5-T]` ✅ Coleta Instagram — pipeline ativo
 - `[5-T]` ✅ Catálogo paleteiras — GitHub Pages publicado
-- `[4-C]` WhatsApp Bot — rodando no Railway (número de teste). Aguardando verificação Meta para ativar número real 47 99232-5747
+- `[2-E]` WhatsApp Bot — migrado da Meta API para Evolution (`execution/whatsappResponder.py`), instância `pai_moper_maquinas`. **Falta: escanear QR code com celular dedicado da Moper**
 - `[1-S]` Coleta TikTok — credenciais vazias
 - `[1-S]` Coleta YouTube — credenciais vazias
 
