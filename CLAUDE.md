@@ -277,7 +277,23 @@ For questions or issues:
 
 ---
 
-**Last Updated**: 2026-04-21
+## Context Guardian
+
+Monitore o peso do contexto ao longo de cada sessão. Quando perceber que o histórico
+está longo — muitos arquivos lidos, muitos tool calls encadeados, respostas acumuladas —
+termine a tarefa atual e invoque o skill `context-guardian` sem esperar instrução do usuário.
+
+Sinais de contexto pesado:
+- Mais de 15–20 tool calls na sessão
+- Arquivos grandes lidos (execution/, directives/, PLANO.md)
+- Respostas longas encadeadas
+- Sensação de que "já fiz muita coisa nesta sessão"
+
+**Não espere chegar ao limite.** Agir cedo garante handoff limpo e docs atualizados.
+
+---
+
+**Last Updated**: 2026-06-06
 **Architecture**: 3-Layer (Directives → Orchestration → Execution)
 **Status**: 🟡 Em progresso — infra configurada, coletas pendentes de teste
 
