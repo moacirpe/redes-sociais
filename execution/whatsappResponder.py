@@ -1,20 +1,11 @@
 #!/usr/bin/env python3
 """
-Claude AI responder para o bot WhatsApp da Moper Máquinas via Evolution API.
-
-Como o Laika, o Moper usa Evolution API (não-oficial, via QR code) em vez da
-Meta API oficial — mantém o celular dedicado funcionando normalmente e permite
-que um humano assuma a conversa pelo WhatsApp comum.
+Claude AI responder para o bot WhatsApp da Moper Máquinas.
 
 Funcionalidades:
 - Memória de conversa por 30 dias (PostgreSQL)
 - Horário de atendimento: Seg-Sex 8h-18h, Sáb 8h-13h
 - Transferência para humano quando solicitado ou quando IA não souber responder
-
-Configuração no .env:
-    EVOLUTION_API_URL=https://evo.huboperacional.com.br
-    EVOLUTION_API_KEY_MOPER=<chave da instância Moper>
-    EVOLUTION_INSTANCIA_MOPER=pai_moper_maquinas
 """
 
 import logging
@@ -39,10 +30,22 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-EVOLUTION_URL = os.getenv("EVOLUTION_API_URL", "").rstrip("/")
-EVOLUTION_KEY = os.getenv("EVOLUTION_API_KEY_MOPER", "")
-INSTANCE = os.getenv("EVOLUTION_INSTANCIA_MOPER", "pai_moper_maquinas")
+PHONE_NUMBER_ID = os.getenv("MOPER_WHATSAPP_PHONE_NUMBER_ID")
 TZ = ZoneInfo("America/Sao_Paulo")
+
+# Token mutável — pode ser atualizado em runtime via /admin/update-token
+_active_token = os.getenv("MOPER_WHATSAPP_TOKEN", "")
+
+
+def setActiveToken(new_token: str):
+    global _active_token
+    _active_token = new_token
+    logger.info(f"Token atualizado em runtime: ...{new_token[-20:]}")
+
+
+def getActiveToken() -> str:
+    return _active_token
+
 
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
@@ -169,10 +172,18 @@ def wantsHuman(text: str) -> bool:
 
 
 def sendWhatsappMessage(to: str, text: str):
-    """Envia mensagem de texto via Evolution API."""
-    url = f"{EVOLUTION_URL}/message/sendText/{INSTANCE}"
-    headers = {"apikey": EVOLUTION_KEY, "Content-Type": "application/json"}
-    payload = {"number": to, "text": text}
+    """Envia mensagem de texto via WhatsApp Business API."""
+    url = f"https://graph.facebook.com/v21.0/{PHONE_NUMBER_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {getActiveToken()}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "text",
+        "text": {"body": text},
+    }
     r = requests.post(url, json=payload, headers=headers, timeout=15)
     r.raise_for_status()
     logger.info(f"Mensagem enviada para {to}")
