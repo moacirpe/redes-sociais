@@ -64,6 +64,7 @@ VERIFY_TOKEN = os.getenv("MOPER_WHATSAPP_VERIFY_TOKEN", "moper_secret_2026")
 
 # ─────────────────────────── Moper — Meta API ───────────────────────────
 
+@app.route("/webhook", methods=["GET"])
 @app.route("/webhook/moper", methods=["GET"])
 def verifyMoperWebhook():
     """Verificação do webhook Meta — a Meta envia um desafio e espera a resposta."""
@@ -79,6 +80,7 @@ def verifyMoperWebhook():
     return "Forbidden", 403
 
 
+@app.route("/webhook", methods=["POST"])
 @app.route("/webhook/moper", methods=["POST"])
 def receiveMoperMessage():
     """Recebe mensagens da Moper Máquinas via WhatsApp Business API (Meta)."""
