@@ -10,7 +10,9 @@ Funcionalidades:
 
 import logging
 import os
+import re
 from datetime import datetime
+from urllib.parse import quote
 from zoneinfo import ZoneInfo
 
 import requests
@@ -60,6 +62,10 @@ em máquinas para movimentação de cargas e construção civil.
 
 == PORTFÓLIO E ESTOQUE ATUAL ==
 
+# FONTE DO ESTOQUE: "MOPER - Equipe/Estoque/estoque-moper.md" (snapshot 17/jul/2026).
+# Dado volátil — quando a Melissa atualizar aquele arquivo, ATUALIZAR AQUI TAMBÉM.
+# Prometer pronta entrega de máquina zerada queima o cliente na primeira ligação.
+
 Use as informações de estoque para informar prazo e condições de pagamento corretas.
 EM ESTOQUE = entrega ~10 dias, entrada (30%) à vista.
 SOB ENCOMENDA = entrega ~90 dias, entrada (30%) parcelável em até 3x.
@@ -67,7 +73,7 @@ SOB ENCOMENDA = entrega ~90 dias, entrada (30%) parcelável em até 3x.
 Empilhadeiras Elétricas Moper® (rápidas, silenciosas, ideais para ambientes internos):
 - 2 Toneladas        → SOB ENCOMENDA
 - 2,5 Toneladas      → SOB ENCOMENDA
-- 3 Toneladas        → EM ESTOQUE (1 unidade)
+- 3 Toneladas        → SOB ENCOMENDA
 - 3,5 Toneladas      → SOB ENCOMENDA
 
 Empilhadeira Telescópica Moper® 1,5 Toneladas:
@@ -81,7 +87,7 @@ Paleteiras Elétricas Moper® (movem a carga sozinhas, sem esforço físico):
 
 Paleteira Elevatória Semi-Elétrica Moper® 1 Tonelada:
   Diferencial exclusivo: sobe em cima de carreta e entra dentro de caminhão.
-  → SOB ENCOMENDA
+  → EM ESTOQUE (1 unidade)
 
 Paleteira Elétrica Moper® Total 1 Tonelada:
   Diferencial exclusivo: sobe em cima de carreta e entra dentro de caminhão.
@@ -113,17 +119,58 @@ Produto em estoque:
 - WhatsApp / Telefone: +55 47 99232-5747
 - Site: https://www.mopermaquinas.com.br/
 
+== SEU TRABALHO: PRÉ-ATENDIMENTO ==
+
+Você não fecha venda — quem fecha é o consultor humano. Seu trabalho é **descobrir qual máquina \
+serve** para a operação do cliente e entregar isso mastigado para o consultor.
+
+Três respostas decidem a máquina. Você precisa das três:
+  1. QUANTO PESO ele movimenta (em kg ou toneladas)
+  2. A QUE ALTURA precisa elevar (em metros)
+  3. QUE PISO/AMBIENTE — galpão de piso liso, pátio, terreno irregular, obra
+
+E mais uma, para o consultor saber o frete: **de qual cidade/estado ele fala**.
+
+Como perguntar:
+- **Uma pergunta por vez**, em conversa natural. Nunca dispare as quatro de uma vez, nunca use \
+  formato de formulário.
+- Responda primeiro o que ele perguntou, depois puxe a próxima pergunta.
+- Se ele já deu a informação, NÃO pergunte de novo.
+- Se ele não quiser responder, siga adiante — não insista mais de uma vez no mesmo ponto.
+
+**ENCERRAMENTO — o mais importante:** assim que tiver peso + altura + piso (a cidade é \
+desejável, não obrigatória), você fez o seu trabalho. Nessa MESMA mensagem:
+  1. Recomende UMA máquina em 2 ou 3 linhas, com o prazo correto do estoque.
+  2. E termine com estas duas linhas, exatamente assim, no fim da mensagem:
+[TRANSFERIR]
+RESUMO: <peso>, <altura>, <piso/ambiente>, <cidade/UF>, interesse: <máquina>
+
+(No RESUMO, escreva "não informado" no que faltar.)
+
+NÃO fique conversando depois disso — nem para tirar mais dúvidas, nem para oferecer opções. \
+Quem continua a partir dali é o consultor humano. Prender o cliente conversando com robô \
+depois de qualificado é o pior erro que você pode cometer.
+
 == REGRAS DE ATENDIMENTO ==
 Tom: profissional, direto e confiante. Sem emojis excessivos.
 
 1. Responda de forma clara e objetiva.
 2. Nunca invente preços exatos — diga que o valor varia conforme configuração e ofereça \
    conectar com um consultor via +55 47 99232-5747 ou pelo site.
-3. Se a pergunta estiver fora do escopo, responda brevemente e redirecione para os produtos.
-4. Máximo 3 parágrafos curtos por resposta.
-5. Ao final, sempre ofereça mais ajuda ou sugira falar com a equipe para fechar negócio.
+3. Nunca prometa prazo diferente do estoque acima. EM ESTOQUE = ~10 dias. SOB ENCOMENDA = ~90 dias.
+4. Se a pergunta estiver fora do escopo, responda brevemente e redirecione para os produtos.
+5. Máximo 3 parágrafos curtos por resposta.
 6. IMPORTANTE: Se não souber responder com segurança, responda EXATAMENTE com [TRANSFERIR] \
    e nada mais."""
+
+# Trecho anexado ao prompt quando o contato chega fora do horário comercial.
+# O bot continua qualificando — só é honesto sobre quando o humano retorna.
+FORA_HORARIO_PROMPT = """
+
+== ATENÇÃO: ESTE CONTATO CHEGOU FORA DO HORÁRIO COMERCIAL ==
+A equipe humana atende Seg-Sex 8h-18h e Sáb 8h-13h. Você continua o atendimento normalmente \
+e faz as perguntas de qualificação — mas deixe claro, uma única vez e sem alarde, que um \
+consultor retorna no próximo horário comercial. Não prometa retorno imediato."""
 
 TRANSFER_KEYWORDS = [
     "atendente", "humano", "pessoa", "falar com alguém", "falar com um",
@@ -131,20 +178,47 @@ TRANSFER_KEYWORDS = [
     "vendedor", "falar com vendedor", "falar com consultor",
 ]
 
-MSG_FORA_HORARIO = (
-    "Olá! Obrigado por entrar em contato com a Moper Máquinas. 😊\n\n"
-    "Nosso horário de atendimento é:\n"
-    "• Segunda a Sexta: 8h às 18h\n"
-    "• Sábado: 8h às 13h\n\n"
-    "Em breve nossa equipe retornará seu contato. "
-    "Se preferir, envie sua dúvida que respondemos assim que possível!"
-)
+# Número do consultor humano (Rodrigo/Melissa) — WhatsApp comum, acompanhado por gente.
+# NÃO é o número do bot. Ver memória "whatsapp-oficial-leads-moper".
+CONSULTOR_DISPLAY = "(47) 99232-5747"
+CONSULTOR_WA = "5547992325747"
 
-MSG_TRANSFERENCIA = (
-    "Entendido! Vou transferir você para um de nossos consultores. 👨‍💼\n\n"
-    "Em breve a equipe da Moper Máquinas entrará em contato. "
-    "Se preferir, ligue diretamente para nós!"
-)
+# Teto de trocas antes de passar o cliente pro humano de qualquer jeito.
+# Se a IA não fechar a qualificação sozinha, o código fecha por ela.
+MAX_TURNOS_BOT = 6
+
+
+def buildHandoffMessage(resumo: str = "", foraHorario: bool = False) -> str:
+    """Monta a mensagem de passagem para o consultor humano.
+
+    Em vez de prometer "a equipe entrará em contato" — promessa que ninguém era avisado
+    para cumprir — devolve ao cliente um link direto do WhatsApp do consultor, já com o
+    pedido dele escrito. O cliente aperta enviar e o lead chega qualificado, na hora,
+    num número que tem gente olhando.
+    """
+    texto = "Vim do atendimento virtual da Moper."
+    if resumo:
+        texto += f" Preciso de: {resumo}"
+
+    link = f"https://wa.me/{CONSULTOR_WA}?text={quote(texto)}"
+
+    partes = [
+        "Perfeito! Quem fecha negócio aqui é o nosso consultor. 👨‍💼",
+        "",
+        "Fala direto com ele neste link — já vai com o seu pedido escrito, "
+        "é só apertar enviar:",
+        "",
+        link,
+        "",
+        f"Se preferir, salve o contato: {CONSULTOR_DISPLAY}",
+    ]
+    if foraHorario:
+        partes += [
+            "",
+            "Pode mandar agora mesmo — ele responde no próximo horário comercial "
+            "(Seg-Sex 8h-18h, Sáb 8h-13h).",
+        ]
+    return "\n".join(partes)
 
 FALLBACK_MESSAGE = (
     "Olá! Nosso assistente está temporariamente indisponível. "
@@ -189,18 +263,39 @@ def sendWhatsappMessage(to: str, text: str):
     logger.info(f"Mensagem enviada para {to}")
 
 
-def generateReply(sender: str, userMessage: str) -> str:
+def generateReply(sender: str, userMessage: str, foraHorario: bool = False) -> str:
     """Chama o Claude com histórico de conversa e retorna a resposta."""
     history = getHistory(sender)
     history.append({"role": "user", "content": userMessage})
 
+    systemPrompt = MOPER_SYSTEM_PROMPT
+    if foraHorario:
+        systemPrompt += FORA_HORARIO_PROMPT
+
     response = client.messages.create(
         model="claude-haiku-4-5-20251001",
         max_tokens=500,
-        system=MOPER_SYSTEM_PROMPT,
+        system=systemPrompt,
         messages=history,
     )
     return response.content[0].text
+
+
+def extractResumo(reply: str) -> str:
+    """Extrai a linha RESUMO: que a IA anexa ao [TRANSFERIR], se houver."""
+    match = re.search(r"RESUMO:\s*(.+)", reply)
+    return match.group(1).strip() if match else ""
+
+
+def stripMarkers(reply: str) -> str:
+    """Remove [TRANSFERIR] e a linha RESUMO, devolvendo só o texto para o cliente.
+
+    A recomendação de máquina que a IA escreveu antes dos marcadores é útil — o cliente
+    deve recebê-la junto com o link do consultor, não em vez dela.
+    """
+    limpo = re.sub(r"RESUMO:.*", "", reply)
+    limpo = limpo.replace("[TRANSFERIR]", "")
+    return limpo.strip()
 
 
 def handleIncomingMessage(sender: str, text: str):
@@ -211,20 +306,15 @@ def handleIncomingMessage(sender: str, text: str):
         logger.info(f"Mensagem de {sender} ignorada — conversa transferida para humano")
         return
 
-    # 2. Fora do horário de atendimento
-    if not isBusinessHours():
-        logger.info(f"Fora do horário — respondendo {sender} com mensagem de fechado")
-        try:
-            sendWhatsappMessage(sender, MSG_FORA_HORARIO)
-        except Exception as e:
-            logger.error(f"Erro ao enviar mensagem fora de horário para {sender}: {e}")
-        return
+    # 2. Fora do horário NÃO desliga mais o bot: ele qualifica 24/7 e avisa quando o
+    #    humano retorna. Anúncio pago roda de madrugada — é justo aí que o bot vale.
+    foraHorario = not isBusinessHours()
 
     # 3. Cliente pedindo humano explicitamente
     if wantsHuman(text):
         logger.info(f"Cliente {sender} pediu transferência para humano")
         try:
-            sendWhatsappMessage(sender, MSG_TRANSFERENCIA)
+            sendWhatsappMessage(sender, buildHandoffMessage(foraHorario=foraHorario))
             markTransferred(sender)
         except Exception as e:
             logger.error(f"Erro ao transferir {sender}: {e}")
@@ -233,12 +323,26 @@ def handleIncomingMessage(sender: str, text: str):
     # 4. Gera resposta com IA
     try:
         addMessage(sender, "user", text)
-        reply = generateReply(sender, text)
+        reply = generateReply(sender, text, foraHorario=foraHorario)
 
-        # IA sinalizou que não sabe responder
-        if "[TRANSFERIR]" in reply:
-            logger.info(f"IA não soube responder para {sender} — transferindo")
-            sendWhatsappMessage(sender, MSG_TRANSFERENCIA)
+        # IA encerrou a qualificação (ou não soube responder) — passa pro consultor.
+        # Backstop determinístico: mesmo que a IA não marque, o bot não conversa para
+        # sempre — passa a régua em MAX_TURNOS_BOT trocas.
+        historico = len(getHistory(sender))
+        estourouTurnos = historico >= MAX_TURNOS_BOT * 2
+
+        if "[TRANSFERIR]" in reply or estourouTurnos:
+            resumo = extractResumo(reply)
+            if estourouTurnos and "[TRANSFERIR]" not in reply:
+                logger.info(f"Backstop de turnos ({historico} msgs) — transferindo {sender}")
+            logger.info(f"Transferindo {sender} para humano — resumo: {resumo or '(vazio)'}")
+
+            recomendacao = stripMarkers(reply)
+            handoff = buildHandoffMessage(resumo=resumo, foraHorario=foraHorario)
+            # A recomendação de máquina vai junto — o cliente não perde o que a IA achou.
+            texto = f"{recomendacao}\n\n{handoff}" if recomendacao else handoff
+
+            sendWhatsappMessage(sender, texto)
             markTransferred(sender)
             return
 
