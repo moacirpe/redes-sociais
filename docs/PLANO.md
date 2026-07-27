@@ -38,7 +38,9 @@ _Atualizado em: 2026-06-06 (sessão 2)_
 
 - `[5-T]` ✅ Coleta Instagram — pipeline ativo
 - `[5-T]` ✅ Catálogo paleteiras — GitHub Pages publicado
-- `[2-E]` WhatsApp Bot — migrado da Meta API para Evolution (`execution/whatsappResponder.py`), instância `pai_moper_maquinas`. **Falta: escanear QR code com celular dedicado da Moper**
+- `[4-C]` WhatsApp Bot **pré-atendimento** — Meta API (`execution/whatsappResponder.py`), bot em +55 11 92501-2098. Reescrito em 27/07: qualifica por peso/altura/piso 24/7, passa o cliente com link `wa.me` do consultor (47) 99232-5747 já preenchido, estoque alinhado ao `estoque-moper.md`. Corrigidos 2 bugs mudos: memória de conversa **nunca funcionou** (`set_session` com transação aberta → tabela com 0 linhas desde sempre) e mensagem do cliente duplicada no histórico. Deploys `3b98c69` e `b13928c`. **Falta repetir o teste real pra virar `[5-T]`.**
+- `[2-E]` Bot grava o lead na planilha "Leads Moper" — ❌ bloqueado: `GOOGLE_REFRESH_TOKEN` morto (`invalid_grant`). Destravar com `authorizeGoogle.py`.
+- `[2-E]` `execution/resetConversation.py` — lista conversas e apaga histórico de um número (necessário pra testar o bot mais de uma vez com o mesmo celular).
 - `[1-S]` Coleta TikTok — credenciais vazias
 - `[1-S]` Coleta YouTube — credenciais vazias
 
