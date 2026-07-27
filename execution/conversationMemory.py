@@ -26,11 +26,39 @@ _conn = None
 
 
 def _getConnection():
+    """Devolve uma conexão viva e sem transação pendente.
+
+    Cuidado histórico (bug corrigido em 27/jul/2026): fazer `_conn.autocommit = False`
+    a cada chamada quebrava tudo. No psycopg2 mexer em autocommit chama `set_session`,
+    que é proibido com transação aberta — e o getHistory faz SELECT sem fechar a
+    transação. Resultado: a primeira chamada passava e todas as seguintes levantavam
+    "set_session cannot be used inside a transaction". Como addMessage engolia a
+    exceção, o bot rodava SEM MEMÓRIA NENHUMA e repetia as perguntas ao cliente.
+    A tabela ficou com 0 linhas desde sempre.
+    """
     global _conn
+
+    # Conexão reaproveitada: limpa transação pendente e confirma que ainda está viva
+    # (o Neon derruba conexão ociosa, e aí `closed` sozinho não denuncia).
+    if _conn is not None and not _conn.closed:
+        try:
+            if _conn.get_transaction_status() != psycopg2.extensions.TRANSACTION_STATUS_IDLE:
+                _conn.rollback()
+            with _conn.cursor() as cur:
+                cur.execute("SELECT 1")
+            _conn.commit()
+            return _conn
+        except Exception:
+            logger.warning("Conexão com o banco caiu — reconectando")
+            try:
+                _conn.close()
+            except Exception:
+                pass
+            _conn = None
+
     try:
-        if _conn is None or _conn.closed:
-            _conn = psycopg2.connect(DATABASE_URL)
-        _conn.autocommit = False
+        _conn = psycopg2.connect(DATABASE_URL)
+        _conn.autocommit = False  # só na criação — nunca com transação aberta
         return _conn
     except Exception as e:
         logger.error(f"Erro ao conectar ao banco: {e}")

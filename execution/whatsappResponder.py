@@ -264,9 +264,20 @@ def sendWhatsappMessage(to: str, text: str):
 
 
 def generateReply(sender: str, userMessage: str, foraHorario: bool = False) -> str:
-    """Chama o Claude com histórico de conversa e retorna a resposta."""
-    history = getHistory(sender)
-    history.append({"role": "user", "content": userMessage})
+    """Chama o Claude com histórico de conversa e retorna a resposta.
+
+    O chamador já persistiu a mensagem do cliente via addMessage(), então ela JÁ VEM
+    no getHistory(). Anexá-la de novo fazia o modelo ver o cliente repetindo a mesma
+    frase duas vezes seguidas — era a causa das perguntas redundantes.
+    """
+    history = [
+        m for m in getHistory(sender) if m["role"] in ("user", "assistant")
+    ]
+
+    # Rede de segurança: se a última mensagem não for a do cliente (falha de gravação
+    # no banco, por exemplo), garante que ela entre.
+    if not history or history[-1] != {"role": "user", "content": userMessage}:
+        history.append({"role": "user", "content": userMessage})
 
     systemPrompt = MOPER_SYSTEM_PROMPT
     if foraHorario:
