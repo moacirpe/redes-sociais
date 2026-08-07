@@ -1,6 +1,47 @@
 # ESTADO — Redes Sociais
-Status: 🟢 ativo
-Atualizado em: 17/jul/2026
+Status: 🔴 BOT MOPER FORA DO AR
+Atualizado em: 07/ago/2026
+
+## 🚨 BOT MOPER CAIU — APP SUMIU DA RAILWAY (diagnosticado 06/ago/2026)
+
+**O Marechal informou "não está no ar". Diagnosticado com evidência, não por dedução.**
+
+**Evidência 1 — o app não existe mais na Railway:**
+```
+GET https://web-production-476d9.up.railway.app/
+HTTP/2 404 · x-railway-fallback: true
+{"status":"error","code":404,"message":"Application not found"}
+```
+Mesma resposta em `/webhook/moper`. O header `x-railway-fallback: true` é resposta da
+**plataforma**, não do Flask. App rodando e quebrado daria 502 "Application failed to respond"
+ou erro do próprio app. Isto é a Railway dizendo que **nenhuma aplicação serve esse domínio**.
+⇒ Cliente manda mensagem → Meta tenta entregar no webhook → recebe 404 → **a mensagem morre**.
+
+**Evidência 2 — banco vivo e vazio:** Neon conecta normal; `whatsapp_conversations` existe com o
+schema certo (`id, sender, role, content, transferred, created_at`) e tem **0 linhas**. A
+retenção é 30 dias e o último commit é de 27/jul (10 dias), então o `purgeExpired` **não**
+explica. ⚠️ **Não dá para distinguir daqui** entre "nada foi processado" e "os registros do teste
+foram limpos com `resetConversation.py`" — **não chutar**. O que se pode afirmar: não existe
+registro de nenhuma conversa de cliente.
+
+**Evidência 3 — o código não mudou:** último commit `44ff075` (27/jul). **Caiu a hospedagem, não
+o software.** Não há bug para caçar; há serviço para restaurar.
+
+**❓ O QUE FALTA PARA FECHAR O DIAGNÓSTICO (precisa do Marechal):** abrir **railway.app** e ver
+o que houve — projeto apagado? trial/plano expirado? pagamento recusado? serviço renomeado (o
+domínio mudaria)? Sem o painel não dá para saber, e **daqui eu não tenho acesso**.
+
+**⚠️ NÃO SE SABE DESDE QUANDO ESTÁ FORA.** O banco não dá timestamp (0 linhas). Só o painel da
+Railway responde. **Impacto comercial a apurar:** onde o número do bot (**+55 11 92501-2098**)
+está publicado? Os 31 leads do anúncio de 30/jul–4/ago entraram pelo link `wa.me` do **(47)
+99232-5747** (humano), então **não dependiam do bot** — mas quem procurou o número do bot caiu no
+vazio e ninguém soube.
+
+**🎯 A LIÇÃO QUE JÁ ESTAVA ESCRITA AQUI.** O item "(Desejável) check de saúde pra avisar se o bot
+cair — hoje o alarme é 'alguém reparar'" (linha da seção 1) **se cumpriu literalmente**: o bot
+morreu e o alarme foi o Marechal comentar por acaso, dias depois. **O check de saúde sai de
+"desejável" para pré-requisito.** Qualquer trabalho de melhoria do atendimento começa por saber
+que ele está vivo — antes de qualidade de conversa, estoque sincronizado ou RESUMO na planilha.
 
 ## 🎯 TAREFAS ABERTAS (17/jul/2026)
 

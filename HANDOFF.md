@@ -1,5 +1,46 @@
 # Handoff — Redes Sociais
-_Atualizado em: 2026-07-27 (sessão 4)_
+_Atualizado em: 2026-08-06 (sessão 5)_
+
+## 🚨 SESSÃO 5 (06/ago) — BOT MOPER ESTÁ FORA DO AR
+
+O Marechal informou "não está no ar" enquanto conversávamos sobre melhorar o atendimento.
+Diagnóstico feito com evidência, seguindo `superpowers:systematic-debugging` (Fase 1).
+
+**Causa raiz alcançada: a aplicação não existe mais na Railway.**
+- `GET https://web-production-476d9.up.railway.app/` → **HTTP 404** com header
+  **`x-railway-fallback: true`** e corpo `{"message":"Application not found"}`. Idem em
+  `/webhook/moper`. Isso é resposta de **plataforma**, não do Flask — app rodando e quebrado
+  daria 502/erro do app. Nenhuma aplicação está servindo o domínio.
+- **Consequência:** a Meta tenta entregar a mensagem do cliente no webhook, leva 404, e a
+  mensagem morre. Não é bot lento nem prompt ruim — não há endpoint.
+
+**O que foi verificado e está SÃO (para não caçar no lugar errado):**
+- **Neon PostgreSQL:** conecta normalmente. Tabelas: `execution_logs, metrics, posts,
+  social_accounts, whatsapp_conversations`.
+- **Código:** último commit `44ff075` (27/jul). Nada mudou. **Caiu a hospedagem, não o software.**
+- **`.env` local:** 99 chaves parseadas; `DATABASE_URL`, `ANTHROPIC_API_KEY`,
+  `MOPER_WHATSAPP_TOKEN` e `MOPER_WHATSAPP_PHONE_NUMBER_ID` presentes e não vazios.
+
+**Achado que NÃO foi possível concluir (registrar como aberto, não como fato):**
+`whatsapp_conversations` está com **0 linhas**. A retenção é 30 dias e o último commit tem 10
+dias, então `purgeExpired()` não explica. Mas **não dá para distinguir** entre (a) nada foi
+processado desde 27/jul e (b) os registros do teste foram apagados com `resetConversation.py`.
+**Não converter isso em "a memória nunca funcionou" sem evidência nova.**
+
+**Bloqueio para fechar o diagnóstico:** só o painel da **railway.app** responde por que o app
+sumiu — projeto apagado, trial/plano expirado, pagamento recusado ou serviço renomeado. Precisa
+do Marechal. **Também não se sabe desde quando está fora** (o banco não dá timestamp).
+
+**Decorrência de projeto:** o item que estava como "(Desejável) check de saúde pra avisar se o
+bot cair" **deixou de ser desejável**. O bot morreu e o alarme foi alguém comentar por acaso.
+Antes de mexer em qualidade de conversa, sincronizar estoque ou gravar RESUMO na planilha, o
+atendimento precisa de **prova de vida automática**.
+
+**🔴 SEGURANÇA — o token do GitHub em texto puro no `.git/config` foi exposto no terminal**
+durante esta sessão (rodei `git remote -v` sem lembrar do aviso que já estava no ESTADO).
+**Revogar em github.com/settings/tokens** e reconfigurar o remote sem token na URL (usar
+`gh auth login` ou o credential helper do macOS). Isto já era pendência desde 27/jul.
+
 
 ## O que foi feito nesta sessão (27/07) — bot Moper virou PRÉ-ATENDIMENTO
 
