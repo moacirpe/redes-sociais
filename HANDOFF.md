@@ -75,14 +75,24 @@ Conversa completa lida no banco (`whatsapp_conversations`, **10 mensagens** — 
 estoque**: anunciou a 3T como *"sob encomenda, ~90 dias"* (correto — estoque zero), sem repetir
 a promessa falsa de "em estoque" que existia antes de 27/jul.
 
-### 🔒 Segurança — token do GitHub (parcialmente resolvido)
+### 🔒 Segurança — token do GitHub ✅ RESOLVIDO (10/ago)
 
-O PAT saiu do `.git/config` (estava em texto puro dentro do Google Drive) e foi para o
-**Keychain do macOS**; o remote agora é `https://github.com/moacirpe/redes-sociais.git`, limpo.
-**Ainda precisa ser REVOGADO** em github.com/settings/tokens — ficou exposto por meses e
-reapareceu no terminal. Depois de gerar o novo: `git credential-osxkeychain erase` e regravar.
-⚠️ O teste feito (`git ls-remote`) passou, mas o repo é **público** — isso **não** prova que o
-push autentica. A prova real vem no próximo push.
+Pendência aberta desde 27/jul, fechada com evidência:
+
+1. PAT saiu do `.git/config` (texto puro dentro do Google Drive) → **Keychain do macOS**.
+   Remote agora é `https://github.com/moacirpe/redes-sociais.git`, sem token na URL.
+2. **Token antigo revogado** pelo Moacir. Confirmado: `GET /user` com ele → **HTTP 401**.
+3. **Token novo com privilégio mínimo:** scope **`public_repo`** (era `repo` — controle total de
+   repositórios *privados*, sem data de expiração). Agora expira em **08/nov/2026**.
+4. **Push real validado:** `cb9812e..2452a14`. Isto fecha a ressalva de que `git ls-remote` num
+   repo público não provava escrita.
+
+⚠️ **Renovar até 08/nov/2026** — quando vencer, `git push` passa a falhar com erro de
+autenticação. Gerar outro em github.com/settings/tokens (classic, só `public_repo`) e regravar:
+`git credential-osxkeychain erase` seguido de `store`.
+
+ℹ️ Existe outro PAT na conta, **`Caixio Claude Code`** (projeto diferente), que **expirou em
+06/ago/2026**. Não é risco, mas o Caixio vai precisar de um novo quando for mexido.
 
 ---
 
@@ -209,11 +219,11 @@ chamada real na API Anthropic (crédito **OK**); round-trip de memória gravando
    24/jun, trial da Railway em ~jul/ago, banco ausente o tempo todo). Um ping diário testando
    **webhook + banco + Anthropic** pegaria os três. ⚠️ Falta definir **por onde avisa** —
    `ALERT_EMAIL_*` não existe no `.env` e o `alertSystem.py` nunca teve canal configurado.
-2. **🔴 SEGURANÇA — token do GitHub em texto puro.** O `.git/config` guarda o PAT dentro da URL do
-   remote (`https://ghp_***@github.com/moacirpe/redes-sociais.git`) e o `.git` mora **dentro do
-   Google Drive** — quem acessa a pasta tem escrita no repo. **Revogar** em
-   github.com/settings/tokens e reconfigurar o remote (credential helper do macOS ou `gh auth`,
-   nunca token na URL). Ver também a pendência "Segredos no Drive" no `ESTADO.md`.
+2. ~~🔴 SEGURANÇA — token do GitHub em texto puro~~ ✅ **RESOLVIDO em 10/ago** — ver sessão 6.
+   Token revogado (401 confirmado), novo com scope mínimo `public_repo` no Keychain, push
+   validado. **Só resta anotar na agenda: renovar até 08/nov/2026.**
+   ⚠️ A pendência mais ampla **"Segredos no Drive" continua aberta** no `ESTADO.md` — o `.env`
+   com 99 chaves (tokens do WhatsApp, Anthropic, banco) segue dentro do Google Drive.
 3. **🔴 `GOOGLE_REFRESH_TOKEN` MORTO** (`invalid_grant`, testado 27/07) — o `sheetsClient` não
    escreve, então **o lead qualificado pelo bot não entra sozinho na planilha "Leads Moper"**
    (a Melissa ainda digita à mão). Destravar rodando `authorizeGoogle.py` (OAuth no navegador).
