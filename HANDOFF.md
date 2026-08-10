@@ -53,9 +53,27 @@ registrada).
 | Inscrição do app no webhook da WABA | **ativa** — a Meta não desinscreveu durante o apagão |
 | Banco em produção | `Tabela whatsapp_conversations pronta` (sem erro) |
 
-**⏳ FALTA A ÚNICA PROVA QUE NÃO DÁ PRA FAZER DAQUI:** mandar mensagem real no WhatsApp
-(+55 11 92501-2098) e confirmar que ele **avança nas perguntas em vez de repetir**. Só depois
-disso o bot vira `[5-T]`.
+### ✅ TESTE REAL FEITO PELA MELISSA (10/ago) — bot vira `[5-T]`
+
+Conversa completa lida no banco (`whatsapp_conversations`, **10 mensagens** — o contador que foi
+**0 a vida inteira**). Prova de que a memória grava e é usada:
+
+```
+[user]      Boa tarde
+[assistant] Boa tarde! ... Como posso ajudar?
+[user]      Preciso empilhadeira elétrica 3 toneladas
+[assistant] Empilhadeira Elétrica Moper® 3T ... a que altura vai elevar?
+[user]      4,70 de altura
+[assistant] 4,70 m atende ... o piso é galpão (liso), pátio ou outro?
+[user]      Piso liso
+[assistant] Piso liso é ideal ... de qual cidade/estado você está?
+[user]      Itajaí
+[system]    TRANSFERIDO_PARA_HUMANO
+```
+
+**Avançou nas 4 perguntas sem repetir nenhuma** e transferiu ao final. Também **acertou o
+estoque**: anunciou a 3T como *"sob encomenda, ~90 dias"* (correto — estoque zero), sem repetir
+a promessa falsa de "em estoque" que existia antes de 27/jul.
 
 ### 🔒 Segurança — token do GitHub (parcialmente resolvido)
 
@@ -182,14 +200,15 @@ chamada real na API Anthropic (crédito **OK**); round-trip de memória gravando
 
 ## Próximos passos (por prioridade)
 
-1. **🧪 TESTE REAL DO BOT** (+55 11 92501-2098) — agora com banco em produção pela 1ª vez.
-   Mandar em mensagens separadas: "preciso de uma empilhadeira" → "2 toneladas" → "3 metros" →
-   "galpão de piso liso, sou de Itajaí". **Sinal de sucesso:** ele avança nas perguntas em vez de
-   repetir, e termina recomendando a máquina + link do (47). Se não responder, é transferência de
-   teste anterior segurando → rodar `resetConversation.py "+55 11 92501-2098"`. **Só depois disso
-   o bot vira ✅ `[5-T]`.**
-   Conferir também no banco: `SELECT count(*) FROM whatsapp_conversations;` deve sair **> 0** —
-   é a prova de que a memória grava (esse número foi 0 a vida inteira até agora).
+1. ~~🧪 TESTE REAL DO BOT~~ ✅ **FEITO em 10/ago pela Melissa** — ver sessão 6. Bot `[5-T]`.
+   ⚠️ O número de teste fica **`transferred`** e o bot para de responder nele. Para testar de
+   novo: `python execution/resetConversation.py "<numero>"`.
+
+1b. **🔔 CHECK DE SAÚDE DO BOT — agora é a prioridade real.** O bot ficou ~2 semanas mudo e o
+   alarme foi alguém comentar por acaso. Já caiu por 3 motivos diferentes (crédito Anthropic em
+   24/jun, trial da Railway em ~jul/ago, banco ausente o tempo todo). Um ping diário testando
+   **webhook + banco + Anthropic** pegaria os três. ⚠️ Falta definir **por onde avisa** —
+   `ALERT_EMAIL_*` não existe no `.env` e o `alertSystem.py` nunca teve canal configurado.
 2. **🔴 SEGURANÇA — token do GitHub em texto puro.** O `.git/config` guarda o PAT dentro da URL do
    remote (`https://ghp_***@github.com/moacirpe/redes-sociais.git`) e o `.git` mora **dentro do
    Google Drive** — quem acessa a pasta tem escrita no repo. **Revogar** em
@@ -322,7 +341,7 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 | moacir | YouTube | `[1-S]` | Preencher credenciais |
 | moacir | Relatório mensal | `[5-T]` ✅ | — |
 | moper | Instagram | `[5-T]` ✅ | — |
-| moper | WhatsApp Bot (pré-atendimento) | `[4-C]` | No ar em 10/ago com banco + gunicorn. Teste real por WhatsApp → vira `[5-T]` |
+| moper | WhatsApp Bot (pré-atendimento) | `[5-T]` ✅ | Testado fim-a-fim 10/ago: qualificou (3T→4,70m→piso→cidade) e transferiu, com memória gravando |
 | moper | Bot grava lead na planilha | `[2-E]` | ❌ bloqueado: `GOOGLE_REFRESH_TOKEN` morto → `authorizeGoogle.py` |
 | moper | Catálogo paleteiras | `[5-T]` ✅ | — |
 | laika | Instagram | `[5-T]` ✅ | — |
