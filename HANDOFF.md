@@ -1,7 +1,74 @@
 # Handoff — Redes Sociais
-_Atualizado em: 2026-08-06 (sessão 5)_
+_Atualizado em: 2026-08-10 (sessão 6)_
 
-## 🚨 SESSÃO 5 (06/ago) — BOT MOPER ESTÁ FORA DO AR
+## ✅ SESSÃO 6 (10/ago) — BOT MOPER DE VOLTA AO AR + 2 DEFEITOS DE PRODUÇÃO CORRIGIDOS
+
+Sessão conduzida com a **Melissa** (não o Moacir). Diagnóstico fechado com o CLI da Railway,
+usando um `RAILWAY_API_TOKEN` de conta criado por ela.
+
+**Causa raiz do apagão (definitiva, com a mensagem literal da plataforma):**
+> `Your trial has expired. Please select a plan to continue using Railway.`
+
+O trial da Railway venceu e a plataforma **removeu os deploys**. Nada foi apagado por engano.
+Projeto `fearless-possibility` → serviço `web` → `web-production-476d9.up.railway.app` estava lá,
+com todos os deploys em `REMOVED` e `canRedeploy: true`. Existe também um projeto **duplicado
+`keen-vitality`** (mesmo repo, URL `...ce7131`, também derrubado) — vale apagar depois.
+
+**Janela do apagão:** funcionou em 27/jul (teste do Moacir) → 404 em 06/ago. O bot ficou mudo
+por ~2 semanas e **toda mensagem de cliente nesse período se perdeu** (não respondida, não
+registrada).
+
+**Resolvido:** plano pago assinado (Melissa) → `railway redeploy` → serviço `● Online`.
+
+### 🔴 Dois defeitos que o "está no ar" escondia (achados no log, não no navegador)
+
+1. **`DATABASE_URL` NUNCA EXISTIU NO RAILWAY.** O log de runtime mostrava
+   `Erro ao conectar ao banco: connection to server on socket "/var/run/postgresql/..."`
+   — ou seja, caía no socket local porque a variável não estava setada. **Consequência: a
+   correção de memória de 27/jul (`b13928c`) jamais teve efeito em produção.** O bot rodou esse
+   tempo todo sem banco → sem memória, repetindo perguntas, e `isTransferred()` sempre `False`.
+   Isto também **explica de vez** o mistério da sessão 5 (`whatsapp_conversations` com 0 linhas):
+   não era purga nem reset — **nunca houve gravação**.
+   ⚠️ O HANDOFF anterior afirmava "`DATABASE_URL` no Railway ✅". **Era falso.** Lição: conferir
+   variável no ambiente que roda, não no `.env` local.
+   **Corrigido:** variável setada no serviço. Log agora mostra `Tabela whatsapp_conversations pronta`.
+
+2. **Rodava no servidor de desenvolvimento do Flask, não no gunicorn.** O log trazia
+   `WARNING: This is a development server`. O serviço tinha um **start command customizado**
+   (`PYTHONPATH=. python execution/whatsappWebhook.py`) que **sobrepunha o `Procfile`**.
+   Servidor de desenvolvimento = processo único: uma chamada lenta à API da Anthropic segura as
+   outras mensagens, a Meta estoura timeout e reenvia (risco de resposta duplicada).
+   **Corrigido:** start command trocado para
+   `PYTHONPATH=. gunicorn execution.whatsappWebhook:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120`.
+
+### Verificações com evidência (10/ago)
+
+| Check | Resultado |
+|-------|-----------|
+| App local (antes de mexer) | importa, conecta no Neon, `GET /` 200 → **provou que o código estava são; morreu a hospedagem** |
+| `GET /` em produção | `200 {"laika":true,"moper":true}` |
+| Verificação do webhook (como a Meta faz) | `200` devolvendo o challenge |
+| Webhook com token errado | `403` (rejeita corretamente) |
+| Token WhatsApp na Graph API | válido — `+55 11 92501-2098`, "Moper Máquinas IA", `quality_rating: GREEN` |
+| Inscrição do app no webhook da WABA | **ativa** — a Meta não desinscreveu durante o apagão |
+| Banco em produção | `Tabela whatsapp_conversations pronta` (sem erro) |
+
+**⏳ FALTA A ÚNICA PROVA QUE NÃO DÁ PRA FAZER DAQUI:** mandar mensagem real no WhatsApp
+(+55 11 92501-2098) e confirmar que ele **avança nas perguntas em vez de repetir**. Só depois
+disso o bot vira `[5-T]`.
+
+### 🔒 Segurança — token do GitHub (parcialmente resolvido)
+
+O PAT saiu do `.git/config` (estava em texto puro dentro do Google Drive) e foi para o
+**Keychain do macOS**; o remote agora é `https://github.com/moacirpe/redes-sociais.git`, limpo.
+**Ainda precisa ser REVOGADO** em github.com/settings/tokens — ficou exposto por meses e
+reapareceu no terminal. Depois de gerar o novo: `git credential-osxkeychain erase` e regravar.
+⚠️ O teste feito (`git ls-remote`) passou, mas o repo é **público** — isso **não** prova que o
+push autentica. A prova real vem no próximo push.
+
+---
+
+## 🚨 SESSÃO 5 (06/ago) — BOT MOPER ESTÁ FORA DO AR _(resolvido na sessão 6 — ver acima)_
 
 O Marechal informou "não está no ar" enquanto conversávamos sobre melhorar o atendimento.
 Diagnóstico feito com evidência, seguindo `superpowers:systematic-debugging` (Fase 1).
@@ -91,14 +158,19 @@ chamada real na API Anthropic (crédito **OK**); round-trip de memória gravando
 ## Estado atual
 
 - **Pipeline Instagram:** moacir, moper, laika → Neon PostgreSQL ✅ (cron diário 8h)
-- **Banco ativo:** Neon (cloud PostgreSQL) — `DATABASE_URL` no Railway e no .env ✅
-- **WhatsApp bot Moper:** ✅ **FUNCIONANDO como pré-atendimento** (Meta API, Claude Haiku,
-  `/webhook/moper`). Token permanente (System User) no Railway e no `.env`, verificado 22/06.
-  Número do bot: **+55 11 92501-2098** — ⚠️ **não é** o número dos leads, que é o
-  **(47) 99232-5747** (humano, para onde o bot manda o cliente).
-  ⏳ **Falta repetir o teste real** depois do deploy `b13928c` para confirmar que agora ele
-  **lembra** do que já foi respondido.
-- **Memória de conversa:** ✅ corrigida em 27/07 — 30 dias de retenção, `MAX_MESSAGES = 20`.
+- **Banco ativo:** Neon (cloud PostgreSQL) — `DATABASE_URL` no `.env` ✅ e **agora também no
+  Railway** ✅ (setada em 10/ago; **antes disso faltava em produção** — ver sessão 6)
+- **Hospedagem Railway:** plano **pago** desde 10/ago. O trial venceu e derrubou tudo por ~2
+  semanas. ⚠️ Se o pagamento falhar, o bot cai de novo do mesmo jeito.
+- **WhatsApp bot Moper:** ✅ **NO AR** como pré-atendimento (Meta API, Claude Haiku,
+  `/webhook/moper`), servido por **gunicorn** (2 workers / 4 threads) desde 10/ago.
+  Token permanente (System User) no Railway e no `.env` — revalidado na Graph API em 10/ago
+  (`quality_rating: GREEN`). Número do bot: **+55 11 92501-2098** — ⚠️ **não é** o número dos
+  leads, que é o **(47) 99232-5747** (humano, para onde o bot manda o cliente).
+  ⏳ **Falta o teste real por WhatsApp** para confirmar que ele **lembra** do que já foi
+  respondido — só agora isso é possível, porque só agora existe banco em produção.
+- **Memória de conversa:** código corrigido em 27/07 (30 dias de retenção, `MAX_MESSAGES = 20`),
+  mas **só passou a funcionar de fato em 10/ago**, quando `DATABASE_URL` chegou ao Railway.
 - **WhatsApp bot Laika:** código pronto, Evolution API configurada — **aguardando escanear QR code** com celular (67) 99857-4771
 - **Evolution API:** rodando em https://evo.huboperacional.com.br — instâncias `pai_espaco_laika` e `pai_moper_maquinas` criadas, status `connecting`
 - **Catálogo Moper Paleteiras:** publicado no GitHub Pages ✅ → https://moacirpe.github.io/redes-sociais/paleteiras/
@@ -110,12 +182,14 @@ chamada real na API Anthropic (crédito **OK**); round-trip de memória gravando
 
 ## Próximos passos (por prioridade)
 
-1. **🧪 REPETIR O TESTE REAL DO BOT** (+55 11 92501-2098), depois do deploy `b13928c`. Mandar em
-   mensagens separadas: "preciso de uma empilhadeira" → "2 toneladas" → "3 metros" → "galpão de
-   piso liso, sou de Itajaí". **Sinal de sucesso:** ele avança nas perguntas em vez de repetir, e
-   termina recomendando a máquina + link do (47). Se não responder, é a transferência do teste
-   anterior segurando → rodar `resetConversation.py "+55 11 92501-2098"`. **Só depois disso o bot
-   vira ✅ "pronto".**
+1. **🧪 TESTE REAL DO BOT** (+55 11 92501-2098) — agora com banco em produção pela 1ª vez.
+   Mandar em mensagens separadas: "preciso de uma empilhadeira" → "2 toneladas" → "3 metros" →
+   "galpão de piso liso, sou de Itajaí". **Sinal de sucesso:** ele avança nas perguntas em vez de
+   repetir, e termina recomendando a máquina + link do (47). Se não responder, é transferência de
+   teste anterior segurando → rodar `resetConversation.py "+55 11 92501-2098"`. **Só depois disso
+   o bot vira ✅ `[5-T]`.**
+   Conferir também no banco: `SELECT count(*) FROM whatsapp_conversations;` deve sair **> 0** —
+   é a prova de que a memória grava (esse número foi 0 a vida inteira até agora).
 2. **🔴 SEGURANÇA — token do GitHub em texto puro.** O `.git/config` guarda o PAT dentro da URL do
    remote (`https://ghp_***@github.com/moacirpe/redes-sociais.git`) e o `.git` mora **dentro do
    Google Drive** — quem acessa a pasta tem escrita no repo. **Revogar** em
@@ -213,7 +287,7 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 
 | Variável | Status |
 |----------|--------|
-| `DATABASE_URL` (Neon) | ✅ |
+| `DATABASE_URL` (Neon) | ✅ no `.env` **e no Railway** (só chegou ao Railway em 10/ago) |
 | `META_APP_ID` / `META_APP_SECRET` | ✅ |
 | `INSTAGRAM_TOKEN` / `INSTAGRAM_BUSINESS_ACCOUNT_ID` (moacir) | ✅ |
 | `MOPER_INSTAGRAM_TOKEN` / `MOPER_INSTAGRAM_ACCOUNT_ID` | ✅ |
@@ -248,7 +322,7 @@ A próxima grande frente é publicar posts no Instagram e Facebook das empresas 
 | moacir | YouTube | `[1-S]` | Preencher credenciais |
 | moacir | Relatório mensal | `[5-T]` ✅ | — |
 | moper | Instagram | `[5-T]` ✅ | — |
-| moper | WhatsApp Bot (pré-atendimento) | `[4-C]` | Repetir teste real pós-`b13928c` → vira `[5-T]` |
+| moper | WhatsApp Bot (pré-atendimento) | `[4-C]` | No ar em 10/ago com banco + gunicorn. Teste real por WhatsApp → vira `[5-T]` |
 | moper | Bot grava lead na planilha | `[2-E]` | ❌ bloqueado: `GOOGLE_REFRESH_TOKEN` morto → `authorizeGoogle.py` |
 | moper | Catálogo paleteiras | `[5-T]` ✅ | — |
 | laika | Instagram | `[5-T]` ✅ | — |
