@@ -183,6 +183,101 @@ chamada real na API Anthropic (crédito **OK**); round-trip de memória gravando
 **Achados que NÃO foram corrigidos (ver Próximos passos):** `GOOGLE_REFRESH_TOKEN` morto
 (`invalid_grant`) e **token do GitHub em texto puro no `.git/config`**, dentro do Google Drive.
 
+### ⚠️ BOT EM MODO MANUTENÇÃO (ligado 10/ago ~17h, desligar em 11/ago)
+
+Decisão do Moacir: editar o prompt sem atender cliente com versão pela metade. Ele pediu
+"tirar do ar"; ofereci a alternativa e ele escolheu **modo manutenção** — melhor mandar o
+cliente para uma pessoa do que deixá-lo no silêncio.
+
+- **Chave:** `MOPER_MODO_MANUTENCAO=1` no Railway. Lida **a cada mensagem** (não no import),
+  então liga/desliga sem tocar em código: `railway variables --set "MOPER_MODO_MANUTENCAO=0"`.
+- **Comportamento:** responde mensagem curta + link `wa.me` do consultor. **Não chama a IA**
+  (sem custo), **não grava histórico** e **não marca `transferred`** — ao desligar, o cliente
+  volta a ser atendido do zero.
+- **Código:** `modoManutencao()` / `buildManutencaoMessage()` em `whatsappResponder.py`,
+  checado no passo 2 de `handleIncomingMessage` (depois do check de transferido). Commit `6429e84`.
+
+### 🔴 Três defeitos achados na conversa real de 10/ago (não corrigidos)
+
+O Moacir colou o transcript do teste. Achados olhando a conversa, não o código:
+
+1. **O link do consultor está sendo escondido — é o que custa dinheiro.** A mensagem final
+   junta recomendação + specs + prazo + pagamento + link, fica longa, e o WhatsApp corta com
+   **"Ler mais"** — com o link **dentro da parte oculta**. O cliente que não expandir nunca vê
+   o passo que fecha o lead. Origem: `whatsappResponder.py:354`
+   (`texto = f"{recomendacao}\n\n{handoff}"`). **Correção acordada:** mandar o link em
+   mensagem separada e curta, logo depois da recomendação.
+2. **Mensagem duplicada.** Às 15:04:11 a mesma resposta saiu duas vezes. Hipótese mais
+   provável: a Meta reentrega o webhook e **o bot não guarda quais message ids já processou**.
+   ⚠️ **Não confirmado no código — não converter em fato sem evidência.**
+3. **Tique do "Perfeito!".** Três "Perfeito!" seguidos e dois encerramentos emendados
+   ("Excelente! Temos tudo que precisamos" + "Perfeito! Quem fecha negócio..."). Soa robô.
+
+### ⏳ Reescrita do prompt — persona "Elô" (acordada, parcialmente redigida)
+
+O Moacir batizou a IA de **Elô** e quer um **menu de abertura** (auto atendimento): o cliente
+escolhe entre receber informações ou falar com um humano.
+
+**Estrutura de 8 blocos acordada** (hoje o prompt é um bloco só de ~100 linhas em
+`whatsappResponder.py:60`, difícil de editar sem bagunçar o resto):
+
+| # | Bloco | Controla |
+|---|-------|----------|
+| 1 | Quem é a Elô | nome, identidade, que é automática |
+| 2 | **Abertura** ✅ redigido | primeira mensagem + menu |
+| 3 | Como ela conversa | tom, tamanho, ritmo |
+| 4 | O que vendemos | portfólio + estoque — **isolar é o ponto**: é o que a Melissa atualiza, e foi o embolado atual que causou a promessa falsa de estoque em julho |
+| 5 | Prazos e pagamento | 10 × 90 dias, entrada, parcelas |
+| 6 | Qualificação | peso, altura, piso, cidade |
+| 7 | Fechamento e transferência | inclui a correção do link separado |
+| 8 | Limites | nunca inventa preço nem prazo |
+
+**Bloco 2 (ABERTURA), texto aprovado:**
+
+```
+Oi! Aqui é a Elô, o atendimento virtual da Moper Máquinas 👋
+
+Posso te ajudar de duas formas:
+
+📋 *Informações sobre nossas máquinas* — empilhadeiras, paleteiras e carretas
+👤 *Falar com um consultor* — te passo direto para a equipe
+
+Se preferir, nosso site é mopermaquinas.com.br
+
+*Como posso ajudar?*
+```
+
+Regras acordadas junto: apresentar-se **uma única vez**; **pular o menu** se o cliente já
+chegar dizendo o que precisa; se escolher consultor, **uma pergunta só** antes de transferir;
+assumir que é automática e **nunca fingir bastidor** ("vou consultar o estoque").
+
+⚠️ **Trade-off que o Moacir aceitou de olhos abertos:** oferecer "falar com humano" na primeira
+mensagem faz mais gente escolher isso, e o consultor passa a receber lead **cru**. A pergunta
+única antes de transferir é o meio-termo.
+
+### ⏳ Vigia de saúde — design aprovado, nada implementado
+
+Quatro decisões fechadas com o Moacir (nesta ordem):
+
+1. **Onde roda:** GitHub Actions — **fora da Railway de propósito**. Um vigia dentro da coisa
+   que ele vigia teria morrido junto com o bot em julho.
+2. **Como avisa:** template próprio na Meta (categoria UTILITY, com variável para o motivo).
+   Ainda **não criado**. O único template aprovado hoje é o `hello_world` (texto fixo, sem
+   variável). A Meta leva de minutos a ~24h para aprovar.
+3. **O que testa:** site + banco + IA (os três motivos que já derrubaram o bot; um "o site
+   responde?" teria pego só um deles).
+4. **Ritmo:** de hora em hora, avisa **só na mudança de estado** (caiu / voltou), mais um
+   heartbeat às segundas de manhã — silêncio não pode ser ambíguo.
+
+**Arquitetura escolhida (e o porquê):** um endpoint `/health` **dentro do bot**, protegido por
+token próprio e com resposta cacheada alguns minutos (senão qualquer um na internet gasta
+crédito da Anthropic apertando). O vigia externo só lê o veredito. Assim **`DATABASE_URL` e
+`ANTHROPIC_API_KEY` nunca saem da Railway** — o GitHub só guarda a chave de mandar WhatsApp.
+
+**Estado guardado** num arquivo em branch separada do próprio repo (vira histórico de quedas
+de brinde — hoje não se sabe nem o dia exato em que o bot morreu em julho). **Alerta vai para
+o 67 99902-2233** (pessoal do Moacir; o (47) 99232-5747 é o comercial/Rodrigo).
+
 ## Estado atual
 
 - **Pipeline Instagram:** moacir, moper, laika → Neon PostgreSQL ✅ (cron diário 8h)

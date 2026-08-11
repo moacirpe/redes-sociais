@@ -38,7 +38,10 @@ _Atualizado em: 2026-06-06 (sessão 2)_
 
 - `[5-T]` ✅ Coleta Instagram — pipeline ativo
 - `[5-T]` ✅ Catálogo paleteiras — GitHub Pages publicado
-- `[4-C]` WhatsApp Bot **pré-atendimento** — Meta API (`execution/whatsappResponder.py`), bot em +55 11 92501-2098. Reescrito em 27/07: qualifica por peso/altura/piso 24/7, passa o cliente com link `wa.me` do consultor (47) 99232-5747 já preenchido, estoque alinhado ao `estoque-moper.md`. Corrigidos 2 bugs mudos: memória de conversa **nunca funcionou** (`set_session` com transação aberta → tabela com 0 linhas desde sempre) e mensagem do cliente duplicada no histórico. Deploys `3b98c69` e `b13928c`. **Falta repetir o teste real pra virar `[5-T]`.**
+- `[5-T]` ✅ WhatsApp Bot **pré-atendimento** — Meta API (`execution/whatsappResponder.py`), bot em +55 11 92501-2098. Reescrito em 27/07: qualifica por peso/altura/piso 24/7, passa o cliente com link `wa.me` do consultor (47) 99232-5747 já preenchido, estoque alinhado ao `estoque-moper.md`. **Testado fim-a-fim em 10/08** (3T → 4,70m → piso → cidade, sem repetir pergunta, transferiu). ⚠️ **Em modo manutenção deliberado** (`MOPER_MODO_MANUTENCAO=1`) até a reescrita do prompt "Elô" ficar pronta — ver `ESTADO.md`.
+- `[0]` Persona **"Elô"** + menu de abertura — reescrita do prompt em 8 blocos; bloco ABERTURA redigido, resto pendente. Ver `HANDOFF.md`.
+- `[0]` Correção do **link do consultor escondido** pelo "Ler mais" (`whatsappResponder.py:354`) — junta recomendação + link numa mensagem só e o WhatsApp corta. Custa lead.
+- `[0]` **Vigia de saúde** do bot — design aprovado (GitHub Actions + `/health` protegido + template WhatsApp). Nada escrito ainda.
 - `[2-E]` Bot grava o lead na planilha "Leads Moper" — ❌ bloqueado: `GOOGLE_REFRESH_TOKEN` morto (`invalid_grant`). Destravar com `authorizeGoogle.py`.
 - `[2-E]` `execution/resetConversation.py` — lista conversas e apaga histórico de um número (necessário pra testar o bot mais de uma vez com o mesmo celular).
 - `[1-S]` Coleta TikTok — credenciais vazias
