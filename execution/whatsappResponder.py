@@ -226,6 +226,34 @@ FALLBACK_MESSAGE = (
 )
 
 
+def modoManutencao() -> bool:
+    """Chave liga/desliga do modo manutenção, lida a cada mensagem.
+
+    Ligada (MOPER_MODO_MANUTENCAO=1), o bot para de qualificar e encaminha todo
+    mundo direto para o consultor humano. Serve para janelas de edição do prompt:
+    é melhor mandar o cliente para uma pessoa do que deixá-lo no silêncio.
+
+    Lida na hora (não no import) de propósito — assim dá para ligar e desligar pela
+    variável no Railway sem alterar código.
+    """
+    return os.getenv("MOPER_MODO_MANUTENCAO", "0").strip() == "1"
+
+
+def buildManutencaoMessage() -> str:
+    """Mensagem enviada enquanto o modo manutenção está ligado."""
+    link = f"https://wa.me/{CONSULTOR_WA}?text={quote('Vim do WhatsApp da Moper. Preciso de atendimento.')}"
+    return "\n".join([
+        "Olá! 👋 Nosso atendimento virtual está passando por uma melhoria "
+        "e volta em breve.",
+        "",
+        "Para não te deixar esperando, fale agora direto com nosso consultor:",
+        "",
+        link,
+        "",
+        f"Ou salve o contato: {CONSULTOR_DISPLAY}",
+    ])
+
+
 def isBusinessHours() -> bool:
     """Verifica se está dentro do horário de atendimento da Moper."""
     now = datetime.now(TZ)
@@ -317,11 +345,22 @@ def handleIncomingMessage(sender: str, text: str):
         logger.info(f"Mensagem de {sender} ignorada — conversa transferida para humano")
         return
 
-    # 2. Fora do horário NÃO desliga mais o bot: ele qualifica 24/7 e avisa quando o
+    # 2. Modo manutenção — não qualifica, encaminha pro consultor e sai.
+    #    Não grava histórico nem marca transferido: quando a manutenção acabar, o
+    #    cliente volta a ser atendido normalmente do zero.
+    if modoManutencao():
+        logger.info(f"Modo manutenção ativo — encaminhando {sender} para o consultor")
+        try:
+            sendWhatsappMessage(sender, buildManutencaoMessage())
+        except Exception as e:
+            logger.error(f"Erro ao encaminhar {sender} em manutenção: {e}")
+        return
+
+    # 3. Fora do horário NÃO desliga mais o bot: ele qualifica 24/7 e avisa quando o
     #    humano retorna. Anúncio pago roda de madrugada — é justo aí que o bot vale.
     foraHorario = not isBusinessHours()
 
-    # 3. Cliente pedindo humano explicitamente
+    # 4. Cliente pedindo humano explicitamente
     if wantsHuman(text):
         logger.info(f"Cliente {sender} pediu transferência para humano")
         try:
@@ -331,7 +370,7 @@ def handleIncomingMessage(sender: str, text: str):
             logger.error(f"Erro ao transferir {sender}: {e}")
         return
 
-    # 4. Gera resposta com IA
+    # 5. Gera resposta com IA
     try:
         addMessage(sender, "user", text)
         reply = generateReply(sender, text, foraHorario=foraHorario)
